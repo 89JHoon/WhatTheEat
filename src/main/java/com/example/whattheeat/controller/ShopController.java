@@ -5,10 +5,7 @@ import com.example.whattheeat.service.ShopService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -23,6 +20,13 @@ public class ShopController {
     public ResponseEntity<ShopEntity> createShop(@RequestBody ShopEntity shop){
 
         return  ResponseEntity.ok(shopService.createShop(shop));
+    }
+
+    //가게 삭제(폐업)
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteShop(@PathVariable Integer id){
+        shopService.deleteShop(id);
+        return ResponseEntity.noContent().build();
     }
 
 
