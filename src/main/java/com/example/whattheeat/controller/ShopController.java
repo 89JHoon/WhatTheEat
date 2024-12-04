@@ -17,9 +17,9 @@ public class ShopController {
 
     // 가게 등록
     @PostMapping
-    public ResponseEntity<ShopEntity> createShop(@RequestBody ShopEntity shop){
+    public ResponseEntity<ShopEntity> createShop(@RequestBody ShopEntity shopEntity){
 
-        return  ResponseEntity.ok(shopService.createShop(shop));
+        return  ResponseEntity.ok(shopService.createShop(shopEntity));
     }
 
     //가게 삭제(폐업)
@@ -27,6 +27,14 @@ public class ShopController {
     public ResponseEntity<Void> deleteShop(@PathVariable Integer id){
         shopService.deleteShop(id);
         return ResponseEntity.noContent().build();
+    }
+
+
+    //가게 정보 변경
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ShopEntity> updateShop(@RequestBody ShopEntity shopEntity , @PathVariable Integer id){
+        return ResponseEntity.ok(shopService.updateShop(id,shopEntity));
     }
 
 

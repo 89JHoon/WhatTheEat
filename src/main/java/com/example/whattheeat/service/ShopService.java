@@ -29,4 +29,19 @@ public class ShopService {
         shopEntity.setState(State.CLOSED);  // 상태를 CLOSED로 변경
         shopRepository.save(shopEntity);
     }
+
+    @Transactional
+    public ShopEntity updateShop(Integer id, ShopEntity updateShopEntity) {
+        ShopEntity shop = shopRepository.findById(id).orElseThrow(() -> new RuntimeException("shop not found"));
+
+        //수정할 내용
+        shop.setName(updateShopEntity.getName());
+        shop.setOpenTime(updateShopEntity.getOpenTime());
+        shop.setCloseTime(updateShopEntity.getCloseTime());
+        shop.setMinimumPrice(updateShopEntity.getMinimumPrice());
+        shop.setState(updateShopEntity.getState());
+        shop.setModifiedAt(LocalDateTime.now());
+
+        return shopRepository.save(shop);
+    }
 }
