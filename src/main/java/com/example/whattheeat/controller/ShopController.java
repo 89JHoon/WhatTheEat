@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/shops")
@@ -31,13 +33,21 @@ public class ShopController {
 
 
     //가게 정보 변경
-
     @PutMapping("/{id}")
     public ResponseEntity<ShopEntity> updateShop(@RequestBody ShopEntity shopEntity , @PathVariable Integer id){
         return ResponseEntity.ok(shopService.updateShop(id,shopEntity));
     }
 
+    //가게 조회 (전체 조회)
+    @GetMapping
+    public ResponseEntity<List<ShopEntity>> getAllShops(){
+        return ResponseEntity.ok(shopService.getAllShops());
+    }
 
-
+    //가게 조회(단건조회)
+    @GetMapping("/{id}")
+    public ResponseEntity<ShopEntity> getShopById( @PathVariable  Integer id){
+        return ResponseEntity.ok(shopService.getShopById(id));
+    }
 
 }

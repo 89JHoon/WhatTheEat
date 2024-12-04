@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -21,9 +22,9 @@ public class ShopService {
     public ShopEntity createShop(ShopEntity shop) {
         try {
             return shopRepository.save(shop);
-        }catch (DataIntegrityViolationException e){
-            log.error("가게생성실패: 중복된 이름-{}",shop.getName());
-            throw  new DataIntegrityViolationException("이미 등록된 가게입니다.");
+        } catch (DataIntegrityViolationException e) {
+            log.error("가게생성실패: 중복된 이름-{}", shop.getName());
+            throw new DataIntegrityViolationException("이미 등록된 가게입니다.");
         }
 
     }
@@ -54,4 +55,18 @@ public class ShopService {
 
         return shopRepository.save(shop);
     }
+
+    @Transactional(readOnly = true)
+    public List<ShopEntity> getAllShops() {
+        //  삭제 처리된 데이터까지 다 조회됨
+        //  return shopRepository.findAll();
+        return shopRepository.findByDeletedAtIsNull();
+    }
+
+    @Transactional(readOnly = true)
+    public ShopEntity getShopById(Integer id){
+        return shopRepository.findById(id).orElseThrow(() -> new RuntimeException("Shop not found"));
+    }
+
+
 }
