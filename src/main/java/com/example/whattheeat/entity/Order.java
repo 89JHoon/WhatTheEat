@@ -83,4 +83,15 @@ public class Order extends BaseEntity{
     public void calculateTotalPrice(){
         this.totalPrice = this.menu.getPrice() * this.quantity;
     }
+
+    public void setOrderStatus(OrderStatus orderStatus){
+        //배달 완료 상태인지 확인
+        if(this.orderStatus == OrderStatus.DELIVERED){
+            //배달이 완료된 상태라면 예외 발생
+            //상태를 변경할 수 없음
+            throw new IllegalArgumentException("배달이 완료되어 주문 상태를 변경할 수 없습니다.");
+        }
+        //배달 완료 상태가 아니라면 전달된 상태로 변경
+        this.orderStatus = orderStatus;
+    }
 }
