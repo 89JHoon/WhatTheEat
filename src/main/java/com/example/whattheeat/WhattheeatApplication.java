@@ -1,4 +1,4 @@
-package com.yjh.whattheeat;
+package com.example.whattheeat;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

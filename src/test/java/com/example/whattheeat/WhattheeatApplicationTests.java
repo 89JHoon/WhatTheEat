@@ -1,4 +1,4 @@
-package com.yjh.whattheeat;
+package com.example.whattheeat;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
