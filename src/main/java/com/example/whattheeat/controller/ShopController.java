@@ -20,7 +20,6 @@ public class ShopController {
     // 가게 등록
     @PostMapping
     public ResponseEntity<ShopEntity> createShop(@RequestBody ShopEntity shopEntity){
-
         return  ResponseEntity.ok(shopService.createShop(shopEntity));
     }
 

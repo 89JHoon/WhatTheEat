@@ -27,22 +27,22 @@ public class ShopEntity {
     private String name;
 
     // 유저 테이블 이랑 연결 해야되는거 같음
-   //  @ManyToOne(fetch = FetchType.LAZY)
-   //  @JoinColumn(name = "user_id")
-   //  private UserEntity user;
+    //  @ManyToOne(fetch = FetchType.LAZY)
+    //  @JoinColumn(name = "user_id")
+    //  private UserEntity user;
 
     // 임시로 User 엔티티 연결 대신 userId만 저장
     @Column(name = "user_id")
     private Integer userId;
 
 
-    @Column(name ="opentime" , columnDefinition = "TIME")
+    @Column(name = "opentime", columnDefinition = "TIME")
     private LocalTime openTime;
 
-    @Column(name ="closetime" , columnDefinition = "TIME")
+    @Column(name = "closetime", columnDefinition = "TIME")
     private LocalTime closeTime;
 
-    @Column(name = "minimum_price" )
+    @Column(name = "minimum_price")
     private Integer minimumPrice;
 
     @Enumerated(EnumType.STRING)

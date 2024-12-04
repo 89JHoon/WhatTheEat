@@ -64,7 +64,7 @@ public class ShopService {
     }
 
     @Transactional(readOnly = true)
-    public ShopEntity getShopById(Integer id){
+    public ShopEntity getShopById(Integer id) {
         return shopRepository.findById(id).orElseThrow(() -> new RuntimeException("Shop not found"));
     }
 

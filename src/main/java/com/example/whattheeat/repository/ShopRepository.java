@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface ShopRepository extends JpaRepository<ShopEntity,Integer>{
+public interface ShopRepository extends JpaRepository<ShopEntity, Integer> {
     List<ShopEntity> findByDeletedAtIsNull();
 }
 
