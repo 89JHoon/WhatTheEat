@@ -4,12 +4,14 @@ import com.example.whattheeat.entity.ShopEntity;
 import com.example.whattheeat.enums.State;
 import com.example.whattheeat.repository.ShopRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import java.time.LocalDateTime;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ShopService {
@@ -17,7 +19,13 @@ public class ShopService {
 
     @Transactional
     public ShopEntity createShop(ShopEntity shop) {
-        return shopRepository.save(shop);
+        try {
+            return shopRepository.save(shop);
+        }catch (DataIntegrityViolationException e){
+            log.error("가게생성실패: 중복된 이름-{}",shop.getName());
+            throw  new DataIntegrityViolationException("이미 등록된 가게입니다.");
+        }
+
     }
 
 
@@ -35,7 +43,9 @@ public class ShopService {
         ShopEntity shop = shopRepository.findById(id).orElseThrow(() -> new RuntimeException("shop not found"));
 
         //수정할 내용
-        shop.setName(updateShopEntity.getName());
+        //일단 가게 이름은 변경 못하는 걸로
+        //shop.setName(updateShopEntity.getName());
+
         shop.setOpenTime(updateShopEntity.getOpenTime());
         shop.setCloseTime(updateShopEntity.getCloseTime());
         shop.setMinimumPrice(updateShopEntity.getMinimumPrice());
