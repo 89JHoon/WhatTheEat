@@ -5,7 +5,6 @@ import com.example.whattheeat.enums.State;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
@@ -17,7 +16,7 @@ import java.time.LocalTime;
 @NoArgsConstructor
 @Getter
 @Setter
-public class ShopEntity {
+public class ShopEntity extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -48,21 +47,8 @@ public class ShopEntity {
     @Enumerated(EnumType.STRING)
     private State state;
 
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
-
-    @Column(name = "modified_at")
-    private LocalDateTime modifiedAt;
-
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
-
-
-    @PrePersist
-    public void prePersist() {
-        this.createdAt = LocalDateTime.now();
-        this.modifiedAt = LocalDateTime.now();
-    }
 
 
 }

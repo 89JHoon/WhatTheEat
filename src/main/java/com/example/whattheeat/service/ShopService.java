@@ -15,6 +15,7 @@ import java.util.List;
 @Slf4j
 @Service
 @RequiredArgsConstructor
+
 public class ShopService {
     private final ShopRepository shopRepository;
 
@@ -51,7 +52,6 @@ public class ShopService {
         shop.setCloseTime(updateShopEntity.getCloseTime());
         shop.setMinimumPrice(updateShopEntity.getMinimumPrice());
         shop.setState(updateShopEntity.getState());
-        shop.setModifiedAt(LocalDateTime.now());
 
         return shopRepository.save(shop);
     }
