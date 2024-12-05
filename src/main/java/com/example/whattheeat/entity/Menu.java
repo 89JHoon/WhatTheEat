@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 @Entity
 @Getter
 @Table(name = "menu")
-public class MenuEntity extends BaseEntity {
+public class Menu extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -20,6 +20,17 @@ public class MenuEntity extends BaseEntity {
     @Column(nullable = false)
     private BigDecimal price;
 }
-public MenuEntity(){
+public Menu(String name, BigDecimal price){
+    this.name =name;
+    this.price=price;
 }
+public void updateMenu(String name, BigDecimal price){
+    this.name =name;
+    this.price =price;
+
+}
+public void deleteMenu(boolean isDeleted) {
+    this.isDeleted = isDeleted;
+}
+
 

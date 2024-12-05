@@ -25,7 +25,7 @@ public class MenuController {
                                                       HttpServletRequest request) {
         HttpSession session = request.getSession(false);
         //메뉴 생성 service
-        MenuResponseDto menuResponseDto = menuService.createMenu(dto.getShopId(),dto.getName(),dto.getPrice());
+        MenuResponseDto menuResponseDto = menuService.createMenu(dto);
 
         return new ResponseEntity<>(menuResponseDto, HttpStatus.CREATED); //dto로 반환
     }
@@ -35,13 +35,16 @@ public class MenuController {
                                                       HttpServletRequest request) {
         HttpSession session = request.getSession(false);
         //메뉴 수정 service
-        MenuUpdateResponseDto menuResponseDto = menuService.updateMenu(
-                dto.getShopId(),
-                dto.getName(),
-                dto.getPrice()
-
-        );
+        MenuUpdateResponseDto menuResponseDto = menuService.updateMenu(dto);
         //dto로 반혼
         return new ResponseEntity<>(menuResponseDto, HttpStatus.OK);
     }
+    @DeleteMapping("/{menuId}")
+    public ResponseEntity<Void> deleteMenu(@PathVariable("menuId") int menuId, HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+
+        menuService.deleteMenu(menuId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
 }
