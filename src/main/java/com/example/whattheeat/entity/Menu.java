@@ -19,18 +19,21 @@ public class Menu extends BaseEntity {
 
     @Column(nullable = false)
     private BigDecimal price;
-}
-public Menu(String name, BigDecimal price){
-    this.name =name;
-    this.price=price;
-}
-public void updateMenu(String name, BigDecimal price){
-    this.name =name;
-    this.price =price;
 
-}
-public void deleteMenu(boolean isDeleted) {
-    this.isDeleted = isDeleted;
+    public Menu(String name, BigDecimal price) {
+        this.name = name;
+        this.price = price;
+    }
+
+    public void updateMenu(String name, BigDecimal price) {
+        this.name = name;
+        this.price = price;
+
+    }
+
+    public void deleteMenu(boolean isDeleted) {
+        this.isDeleted = isDeleted;
+    }
 }
 
 
