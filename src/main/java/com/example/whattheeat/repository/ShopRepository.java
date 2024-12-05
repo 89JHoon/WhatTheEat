@@ -31,6 +31,9 @@ public interface ShopRepository extends JpaRepository<Shop, Integer> {
     @Query("SELECT s FROM Shop s LEFT JOIN FETCH s.menus WHERE s.id = :id")
     Optional<Shop> findByIdWithMenus(@Param("id") Integer id);
 
+    // 폐업 상태가 아닌 가게 수 조회
+    @Query("SELECT COUNT(s) FROM Shop s WHERE s.user.id = :userId AND s.state != :state")
+    long countActiveShopsByUserId(@Param("userId") Long userId, @Param("state") ShopState state);
 
 
 }

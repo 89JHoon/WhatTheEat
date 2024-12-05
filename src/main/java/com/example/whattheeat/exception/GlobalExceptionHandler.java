@@ -40,5 +40,14 @@ public class GlobalExceptionHandler {
                 .body(e.getMessage());
     }
 
+    // 추가: 가게 개수 제한 예외 처리
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<String> handleIllegalState(IllegalStateException e) {
+        log.error("가게 생성 실패: {}", e.getMessage());
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(e.getMessage());
+    }
+
 
 }

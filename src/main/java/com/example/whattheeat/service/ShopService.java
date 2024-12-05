@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 public class ShopService {
     private final ShopRepository shopRepository;
     private final UserRepository userRepository;
+    private static final int MAX_SHOP_COUNT = 3;
 
     @Transactional
     public Shop createShop(ShopRequestDto shopRequestDto, Long userId) {
@@ -33,6 +34,12 @@ public class ShopService {
             //사용자 조회
             User user = userRepository.findById(userId)
                     .orElseThrow(() -> new RuntimeException("User not found"));
+
+            // 운영 중인 가게 수 확인
+            int activeShopsCount = shopRepository.countActiveShopsByUserId(userId);
+            if (activeShopsCount >= MAX_SHOP_COUNT) {
+                throw new IllegalArgumentException("사장님은 최대 " + MAX_SHOP_COUNT + "개의 가게만 운영할 수 있습니다.");
+            }
 
             Shop shop = Shop.builder()
                     .name(shopRequestDto.getName())
@@ -87,20 +94,20 @@ public class ShopService {
 
     @Transactional(readOnly = true)
     public ShopResponseDto getShopById(Integer id) {
-      Shop shop =  shopRepository.findByIdWithMenus(id).orElseThrow(() -> new RuntimeException("Shop not found"));
+        Shop shop = shopRepository.findByIdWithMenus(id).orElseThrow(() -> new RuntimeException("Shop not found"));
 
-      List<MenuResponseDto> menus = shop.getMenus().stream()
-              .map(menu -> new MenuResponseDto(
-                      menu.getId(),
-                      menu.getName(),
-                      menu.getPrice()
-                  //    menu.getMenuStatus()
-              ))
-              .collect(Collectors.toList());
-      if (menus.isEmpty()){
-          throw new CustomException("메뉴가 준비중입니다. 죄송합니다.");
-      }
-        return new  ShopResponseDto(
+        List<MenuResponseDto> menus = shop.getMenus().stream()
+                .map(menu -> new MenuResponseDto(
+                        menu.getId(),
+                        menu.getName(),
+                        menu.getPrice()
+                        //    menu.getMenuStatus()
+                ))
+                .collect(Collectors.toList());
+        if (menus.isEmpty()) {
+            throw new CustomException("메뉴가 준비중입니다. 죄송합니다.");
+        }
+        return new ShopResponseDto(
                 shop.getId(),
                 shop.getName(),
                 shop.getOpenTime(),
