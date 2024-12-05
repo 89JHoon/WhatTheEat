@@ -13,7 +13,13 @@ public class WebConfig implements WebMvcConfigurer {
 
     private static final String[] ALL_PATH_PATTERNS = {"/**"};
     private static final String[] WHITE_LIST ={"/users/login", "/users/signup"};
-    private static final String[] OWNER_ROLE_REQUIRED_PATH_PATTERNS = {""};
+    private static final String[] OWNER_ROLE_REQUIRED_PATH_PATTERNS = {
+            "/shops/**",          // 가게 관련 모든 경로
+            "/shops/*/menus/**"   // 메뉴 관련 경로
+    };
+    private static final String[] OWNER_ROLE_EXCLUDE_PATTERNS = {
+            "/shops/*/reviews/**" // 리뷰 조회 경로 제외
+    };
 
 
     private final AuthInterceptor authInterceptor;
@@ -30,4 +36,6 @@ public class WebConfig implements WebMvcConfigurer {
                 .addPathPatterns(OWNER_ROLE_REQUIRED_PATH_PATTERNS)
                 .order(2);
     }
+
+
 }

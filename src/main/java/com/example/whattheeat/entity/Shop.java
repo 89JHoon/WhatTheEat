@@ -10,6 +10,7 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.List;
 
 
 @Entity
@@ -32,10 +33,9 @@ public class Shop extends BaseEntity {
     @Column(name = "name", unique = true, length = 50)
     private String name;
 
-
-      @ManyToOne(fetch = FetchType.LAZY)
-      @JoinColumn(name = "user_id")
-      private User user;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 
     //가게 영업 시간
     @Column(name = "opentime", columnDefinition = "TIME")
@@ -56,15 +56,17 @@ public class Shop extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private ShopState state;
 
-
     @Builder
-    public Shop(String name, User userId, LocalTime openTime, LocalTime closeTime, Integer minimumPrice, ShopState state) {
+    public Shop(String name, User user, LocalTime openTime, LocalTime closeTime, Integer minimumPrice, ShopState state) {
         this.name = name;
-        this.user = userId;
+        this.user = user;
         this.openTime = openTime;
         this.closeTime = closeTime;
         this.minimumPrice = minimumPrice;
         this.state = state;
-
     }
+
+    //가게 조회시 메뉴도 함께
+    @OneToMany(mappedBy = "shopId", fetch = FetchType.LAZY)
+    private List<Menu> menus;
 }
