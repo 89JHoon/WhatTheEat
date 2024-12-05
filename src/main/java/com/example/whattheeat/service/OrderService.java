@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.awt.*;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,12 +26,26 @@ public class OrderService {
     @Transactional
     public OrderResponseDto createOrder(OrderRequestDto requestDto, Long authenticatedCustomerId){
 
+        //메뉴와 가게 존재 확인
         Menu menu = menuRepository.findById(requestDto.getMenuId())
                 .orElseThrow(() -> new IllegalArgumentException("없는 메뉴입니다."));
 
         Shop shop = shopRepository.findById(requestDto.getShopId())
                 .orElseThrow(() -> new IllegalArgumentException("가게를 찾을 수 없습니다."));
 
+        //주문 금액 계산
+        int expectedTotalPrice = menu.getPrice() * requestDto.getQuantity();
+
+        //최소 주문 금액 검증
+        if(expectedTotalPrice < shop.getMinimumOrderPrice()){
+            throw new IllegalArgumentException("최소 주문 금액을 만족하지 못했습니다.");
+        }
+
+        //가게 오픈/마감시간 확인
+        LocalTime now = LocalTime.now();
+        if(now.isBefore(shop.getOpenTime()) || now.isAfter(shop.getCloseTime())){
+            throw new IllegalArgumentException("가게 영업 시간이 아닙니다.");
+        }
 
         Order order = Order.builder()
                 .customer(authenticatedCustomerId)
@@ -61,7 +76,7 @@ public class OrderService {
     }
 
     //주문내역 조회 - 고객
-    @Transactional(readOnly = true)
+    @Transactional
     public List<OrderResponseDto> getOrderByCustomer(Long authenticatedCustomerId){
         List<Order> orders = orderRepository.findByCustomerId(authenticatedCustomerId);
 
@@ -71,7 +86,7 @@ public class OrderService {
     }
 
     //주문내역 조회 - 가게
-    @Transactional(readOnly = true)
+    @Transactional
     public List<OrderResponseDto> getOrderByShop(Long shopId, Long authenticatedOwnerId){
         Shop shop = shopRepository.findById(shopId)
                 .orElseThrow(() -> new IllegalArgumentException("가게를 찾을 수 없습니다."));
