@@ -56,4 +56,5 @@ public class ShopController {
         return ResponseEntity.ok(shopService.getRandomShops());
     }
 
+    테스트입니다.
 }
