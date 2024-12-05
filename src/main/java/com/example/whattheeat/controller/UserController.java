@@ -6,7 +6,6 @@ import com.example.whattheeat.dto.UserRequestDto;
 import com.example.whattheeat.dto.UserResponseDto;
 import com.example.whattheeat.dto.WithdrawRequestDto;
 import com.example.whattheeat.service.UserService;
-import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
