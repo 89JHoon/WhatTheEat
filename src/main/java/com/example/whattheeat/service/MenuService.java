@@ -24,9 +24,9 @@ public class MenuService {
 
     @Transactional
     // 메뉴 생성
-    public MenuResponseDto createMenu(MenuRequestDto menuRequestDto) {
+    public MenuResponseDto createMenu(int userId, int shopId, String name, BigDecimal price) {
         //가게 확인
-        Shop shop = checkShopAndOwner(shopId, userId);
+        Shop shop = checkShopAndMaster(shopId, userId);
         //메뉴 객체 생성
         Menu menu = new Menu(shop, name, price);
         //메뉴 생성
@@ -36,20 +36,20 @@ public class MenuService {
 
     }
 
-    public MenuUpdateResponseDto updateMenu(MenuRequestDto menuRequestDto) {
+    public MenuUpdateResponseDto updateMenu(int userId, int shopId, int menuId, String name, BigDecimal price) {
         //가게 확인
-        checkShopAndOwner(shopId, userId);
+        checkShopAndMaster(shopId, userId);
         //메뉴 확인
         Menu menu = checkMenu(shopId, menuId);
         //메뉴 수정
-        menu.updateMenu(menuRequestDto);
+        menu.updateMenu(name, price);
         menuRepository.save(menu);
         //dto반환
         return new MenuUpdateResponseDto(menu.getName(), menu.getPrice());
     }
 
     public void deleteMenu(int userId, int shopId, int menuId) {
-        checkShopAndOwner(shopId, userId);
+        checkShopAndMaster(shopId, userId);
         Menu menu = checkMenu(shopId, menuId);
         menu.updateDeleted(true);
         menuRepository.save(menu);
@@ -69,7 +69,7 @@ public class MenuService {
         return menu;
     }
 
-    private Shop checkShopAndOwner(int shopId, int userId) {
+    private Shop checkShopAndMaster(int shopId, int userId) {
         //가게 확인
         Shop shop = shopService.findShopById(shopId);
 
@@ -78,4 +78,5 @@ public class MenuService {
             throw new CustomException(ErrorCode.NOT_OWNER_CRUD);
         }
         return shop;
+    }
 }
