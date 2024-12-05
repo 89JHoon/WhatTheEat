@@ -2,11 +2,17 @@ package com.example.whattheeat.controller;
 
 import com.example.whattheeat.dto.OrderRequestDto;
 import com.example.whattheeat.dto.OrderResponseDto;
+import com.example.whattheeat.entity.Order;
+import com.example.whattheeat.repository.OrderRepository;
 import com.example.whattheeat.service.OrderService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.aspectj.weaver.ast.Or;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/orders")
@@ -14,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 public class OrderController {
 
     private final OrderService orderService;
+    private final OrderRepository orderRepository;
 
     //주문 - 고객
     @PostMapping
@@ -49,4 +56,34 @@ public class OrderController {
         return ResponseEntity.ok(responseDto);
     }
 
+    @GetMapping
+    public ResponseEntity<List<OrderResponseDto>> getOrders(HttpSession session, @RequestParam(required = false) Long shopId){
+        Long authenticatedUserId = (Long) session.getAttribute("authenticatedUserId");
+        String role = (String) session.getAttribute("authenticatedUserRole");
+
+        if(authenticatedUserId == null || role == null){
+            throw new IllegalArgumentException("로그인을 해주세요.");
+        }
+
+        if("CUSTOMER".equals(role)){
+            return ResponseEntity.ok(orderService.getOrderByCustomer(authenticatedUserId));
+        }else if("OWNER".equals(role)){
+            if(shopId == null){
+                throw new IllegalArgumentException("가게 ID를 입력해주세요");
+            }
+
+            Shop shop = shopRepository.findById(shopId)
+                    .orElseThrow(() -> new IllegalArgumentException("가게를 찾을 수 없습니다."));
+
+            if(!shop.getOwner().getId().equals(authenticatedOwnerId)){
+                throw new IllegalArgumentException("해당 가게의 주문 내역을 조회할 권한이 없습니다.");
+            }
+
+            List<Order> orders = orderRepository.findByShopId(shopId);
+
+            return orders.stream()
+                    .map(order -> new OrderResponseDto(order))
+                    .collect(Collectors.toList());
+        }
+    }
 }
