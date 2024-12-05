@@ -39,7 +39,7 @@ public class UserController {
 
         userService.withdraw(userId, requestDto);
 
-        return new ResponseEntity<>("회원 탈퇴가 완료되었습니다.", HttpStatus.OK);
+        return new ResponseEntity<>("회원 탈퇴가 되었습니다.", HttpStatus.OK);
     }
 
     // 로그인
@@ -51,7 +51,23 @@ public class UserController {
         Long loginId = userService.login(requestDto);
         setSession(servletRequest, loginId);
 
-        return new ResponseEntity<>("로그인이 완료되었습니다.", HttpStatus.OK);
+        return new ResponseEntity<>("로그인이 되었습니다.", HttpStatus.OK);
+    }
+
+    // 로그아웃
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout(
+            HttpServletRequest servletRequest){
+
+        sessionValidate(servletRequest);
+        return new ResponseEntity<>("로그아웃 되었습니다.", HttpStatus.OK);
+    }
+
+    private static void sessionValidate(HttpServletRequest servletRequest) {
+        HttpSession loginSession = servletRequest.getSession(false);
+        if (loginSession != null) {
+            loginSession.invalidate();
+        }
     }
 
     private void setSession(HttpServletRequest servletRequest, Long loginId) {
