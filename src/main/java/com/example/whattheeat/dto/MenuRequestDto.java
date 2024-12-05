@@ -8,7 +8,6 @@ import java.math.BigDecimal;
 
 public class MenuRequestDto {
 
-    private int shopId;
     private String name;
     private BigDecimal price;
 

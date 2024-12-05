@@ -21,30 +21,39 @@ public class MenuController {
     //메뉴 생성
     @PostMapping
 
-    public ResponseEntity<MenuResponseDto> createMenu(@RequestBody MenuRequestDto dto,
+    public ResponseEntity<MenuResponseDto> createMenu(@PathVariable int shopId, @RequestBody MenuRequestDto dto,
                                                       HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
-        //메뉴 생성 service
-        MenuResponseDto menuResponseDto = menuService.createMenu(dto);
+        //세션에서 로그인된 사용자 정보 불러오기
+        int userId = getUserId(request);
+        //메뉴 생성하고, 서비스 실행
 
-        return new ResponseEntity<>(menuResponseDto, HttpStatus.CREATED); //dto로 반환
+        //메뉴 생성 service
+        MenuResponseDto menuResponseDto = menuService.createMenu(userId,shopId,dto.getName(),dto.getPrice());
+        //dto 반환
+        return new ResponseEntity<>(menuResponseDto, HttpStatus.CREATED);
     }
     //메뉴 수정
     @PutMapping("/{menuId}")
-    public ResponseEntity<MenuUpdateResponseDto> updateMenu(@RequestBody MenuRequestDto dto,
-                                                      HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
-        //메뉴 수정 service
-        MenuUpdateResponseDto menuResponseDto = menuService.updateMenu(dto);
+    public ResponseEntity<MenuUpdateResponseDto> updateMenu(@PathVariable int shopId, @PathVariable int menuId,
+    @RequestBody MenuRequestDto dto, HttpServletRequest request) {
+        //세션에서 로그인된 사용자 정보 가져오기
+        int userId = getUserId(request);
+        //메뉴 수정 service 실행
+        MenuUpdateResponseDto menuResponseDto = menuService.updateMenu(userId,shopId,menuId,dto.getName(),dto.getPrice());
         //dto로 반혼
         return new ResponseEntity<>(menuResponseDto, HttpStatus.OK);
     }
     @DeleteMapping("/{menuId}")
-    public ResponseEntity<Void> deleteMenu(@PathVariable("menuId") int menuId, HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
-
-        menuService.deleteMenu(menuId);
+    public ResponseEntity<Void> deleteMenu(@PathVariable int shopId,@PathVariable int menuId, HttpServletRequest request) {
+        //세션에서 로그인된 사용자 정보 가져오기
+        int userId = getUserId(request);
+        menuService.deleteMenu(userId,shopId,menuId);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+    private static int getUserId(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        int userId = (int)session.getAttribute("LOGIN_USER");
+        return userId;
     }
 
 }

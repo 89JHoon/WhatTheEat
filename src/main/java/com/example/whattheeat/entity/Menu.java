@@ -20,6 +20,9 @@ public class Menu extends BaseEntity {
     @Column(nullable = false)
     private BigDecimal price;
 
+    @Column(nullable = false)
+    private Boolean isDeleted = false;
+
     public Menu(String name, BigDecimal price) {
         this.name = name;
         this.price = price;
