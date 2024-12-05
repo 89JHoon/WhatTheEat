@@ -3,12 +3,11 @@ package com.example.whattheeat.dto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-import javax.swing.plaf.nimbus.State;
 import java.time.LocalTime;
 
 @Getter
 @AllArgsConstructor
-public class ShopDto {
+public class ShopResponseDto {
     private final String name;
     private final Integer minimumPrice;
     private final LocalTime openTime;

@@ -3,6 +3,7 @@ package com.example.whattheeat.entity;
 
 import com.example.whattheeat.enums.ShopState;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -16,7 +17,9 @@ import java.time.LocalTime;
 @NoArgsConstructor
 @Getter
 @Setter
-public class ShopEntity extends BaseEntity {
+@Builder
+
+public class Shop extends BaseEntity {
 
     //가게 ID
     //기본 키 설정 ID 자동 생성
@@ -29,15 +32,10 @@ public class ShopEntity extends BaseEntity {
     @Column(name = "name", unique = true, length = 50)
     private String name;
 
-    // 유저 테이블 이랑 연결 해야되는거 같음
-    //  @ManyToOne(fetch = FetchType.LAZY)
-    //  @JoinColumn(name = "user_id")
-    //  private UserEntity user;
 
-    // 임시로 User 엔티티 연결 대신 userId만 저장
-    @Column(name = "user_id")
-    private Integer userId;
-
+      @ManyToOne(fetch = FetchType.LAZY)
+      @JoinColumn(name = "user_id")
+      private User user;
 
     //가게 영업 시간
     @Column(name = "opentime", columnDefinition = "TIME")
@@ -59,6 +57,14 @@ public class ShopEntity extends BaseEntity {
     private ShopState state;
 
 
+    @Builder
+    public Shop(String name, User userId, LocalTime openTime, LocalTime closeTime, Integer minimumPrice, ShopState state) {
+        this.name = name;
+        this.user = userId;
+        this.openTime = openTime;
+        this.closeTime = closeTime;
+        this.minimumPrice = minimumPrice;
+        this.state = state;
 
-
+    }
 }
