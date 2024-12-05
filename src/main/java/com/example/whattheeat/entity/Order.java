@@ -2,11 +2,9 @@ package com.example.whattheeat.entity;
 
 import com.example.whattheeat.enums.OrderStatus;
 import jakarta.persistence.*;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.awt.*;
 
 @Entity
 @Getter
@@ -38,7 +36,7 @@ public class Order extends BaseEntity{
     //가게 데이터를 지연로딩
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "shop_id", nullable = false)
-    private Shop shop;
+    private ShopEntity shop;
 
     //주문 상태
     //enum 값을 문자열로 지정
@@ -51,7 +49,7 @@ public class Order extends BaseEntity{
     //주문 수량
     //기본 값은 1이고, 필수값
     @Column(nullable = false)
-    private int quantity = 1;
+    private int quantity;
 
     //총 주문 가격
     //calculateTotalPrice() 메서드에 의해 계산
@@ -64,27 +62,16 @@ public class Order extends BaseEntity{
     private String address;
 
     //주문 엔티티 생성자를 통해 필수 정보를 초기화
-    //Builder 패턴을 사용하여 객체 생성의 가독성을 높임
-    //orderStatus에 삼항연산자 적용
-    //condition ? trueValue : falseValue;
-    @Builder
-    public Order(User customer, Menu menu, Shop shop, int quantity, String address, OrderStatus orderStatus){
+    public Order(User customer, Menu menu, ShopEntity shop, int quantity, String address){
         this.customer = customer;
         this.menu = menu;
         this.shop = shop;
         this.quantity = quantity;
         this.address = address;
-        this.orderStatus = orderStatus != null ? orderStatus : OrderStatus.ORDERED;
-        this.calculateTotalPrice();
+        this.totalPrice = menu.getPrice() * quantity;
     }
 
-    //총 가격 계산
-    //메뉴 가격과 주문 수량을 곱하여 총 가격을 계산
-    public void calculateTotalPrice(){
-        this.totalPrice = this.menu.getPrice() * this.quantity;
-    }
-
-    public void setOrderStatus(OrderStatus orderStatus){
+    public void updateOrderStatus(OrderStatus newStatus){
         //배달 완료 상태인지 확인
         if(this.orderStatus == OrderStatus.DELIVERED){
             //배달이 완료된 상태라면 예외 발생
@@ -92,6 +79,6 @@ public class Order extends BaseEntity{
             throw new IllegalArgumentException("배달이 완료되어 주문 상태를 변경할 수 없습니다.");
         }
         //배달 완료 상태가 아니라면 전달된 상태로 변경
-        this.orderStatus = orderStatus;
+        this.orderStatus = newStatus;
     }
 }

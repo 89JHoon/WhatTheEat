@@ -1,14 +1,11 @@
 package com.example.whattheeat.dto;
 
-import com.example.whattheeat.enums.OrderStatus;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 
 //주문 요청 데이터를 담는 dto
 @Getter
 public class OrderRequestDto {
-    @NotNull
-    private Long customerId;
 
     @NotNull
     private Long menuId;
@@ -21,6 +18,4 @@ public class OrderRequestDto {
 
     @NotNull
     private String address;
-
-    private OrderStatus orderStatus;
 }
