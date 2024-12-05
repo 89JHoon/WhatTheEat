@@ -5,11 +5,15 @@ import com.example.whattheeat.dto.ReviewResponseDto;
 import com.example.whattheeat.entity.Order;
 import com.example.whattheeat.entity.Review;
 import com.example.whattheeat.enums.OrderStatus;
+import com.example.whattheeat.exception.CustomException;
 import com.example.whattheeat.repository.OrderRepository;
 import com.example.whattheeat.repository.ReviewRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -46,5 +50,25 @@ public class ReviewService {
     @Transactional
     public ReviewResponseDto updateReview(Long customerId, Long reviewId, ReviewRequestDto requestDto){
 
+    }
+
+    //리뷰 조회
+  //  @Transactional(readOnly = true)
+    @Transactional
+    public List<ReviewResponseDto> getReviewsByShop(Integer shopId, int minRating, int maxRating, Long customerId) {
+        List<Review> reviews = reviewRepository.findByShopIdAndRatingBetween(shopId, minRating, maxRating, customerId);
+
+        if (reviews.isEmpty()) {
+            throw new CustomException("등록된 리뷰가 없습니다.");
+        }
+
+        return reviews.stream()
+                .map(review -> new ReviewResponseDto(
+                        review.getId(),
+                        review.getOrder().getId(),
+                        review.getRating(),
+                        review.getContent()
+                ))
+                .collect(Collectors.toList());
     }
 }
