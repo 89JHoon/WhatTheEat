@@ -1,5 +1,6 @@
 package com.example.whattheeat.service;
 
+import com.example.whattheeat.dto.ShopDto;
 import com.example.whattheeat.entity.ShopEntity;
 import com.example.whattheeat.enums.ShopState;
 import com.example.whattheeat.repository.ShopRepository;
@@ -71,8 +72,9 @@ public class ShopService {
     }
 
     @Transactional(readOnly = true)
-    public List<ShopEntity>getRandomShop(){
-        return shopRepository.findRandomShops();
+    public List<ShopDto> getRandomShops(){
+       // return shopRepository.findRandomShops();
+        return shopRepository.findRandomShopsSelectColum();
     }
 
 

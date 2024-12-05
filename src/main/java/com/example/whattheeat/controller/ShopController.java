@@ -1,8 +1,8 @@
 package com.example.whattheeat.controller;
 
+import com.example.whattheeat.dto.ShopDto;
 import com.example.whattheeat.entity.ShopEntity;
 import com.example.whattheeat.service.ShopService;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -52,8 +52,8 @@ public class ShopController {
 
     //가게 조회(랜덤 조회)
     @GetMapping("/random")
-    public ResponseEntity<List<ShopEntity>> getRandomShop(){
-        return ResponseEntity.ok(shopService.getRandomShop());
+    public ResponseEntity<List<ShopDto>> getRandomShops(){
+        return ResponseEntity.ok(shopService.getRandomShops());
     }
 
 }
