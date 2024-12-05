@@ -10,6 +10,9 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class ReviewService {
@@ -26,5 +29,15 @@ public class ReviewService {
             throw new IllegalArgumentException("리뷰를 작성할 권한이 없습니다.");
         }
 
+    }
+
+
+
+    //가게 리뷰 조회
+    @Transactional
+   public List<ReviewResponseDto> getReviewsByShopId(Integer shopId){
+        return reviewRepository.findByShopId(shopId).stream()
+                .map(ReviewResponseDto::new)
+                .collect(Collectors.toList());
     }
 }
