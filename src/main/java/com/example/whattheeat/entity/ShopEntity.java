@@ -1,7 +1,7 @@
 package com.example.whattheeat.entity;
 
 
-import com.example.whattheeat.enums.State;
+import com.example.whattheeat.enums.ShopState;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -45,7 +45,7 @@ public class ShopEntity extends BaseEntity {
     private Integer minimumPrice;
 
     @Enumerated(EnumType.STRING)
-    private State state;
+    private ShopState state;
 
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;

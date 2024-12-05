@@ -1,7 +1,7 @@
 package com.example.whattheeat.service;
 
 import com.example.whattheeat.entity.ShopEntity;
-import com.example.whattheeat.enums.State;
+import com.example.whattheeat.enums.ShopState;
 import com.example.whattheeat.repository.ShopRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,7 +36,7 @@ public class ShopService {
         ShopEntity shopEntity = shopRepository.findById(id).orElseThrow(() -> new RuntimeException("Shop not found"));
 
         shopEntity.setDeletedAt(LocalDateTime.now());
-        shopEntity.setState(State.CLOSED);  // 상태를 CLOSED로 변경
+        shopEntity.setState(ShopState.CLOSED);  // 상태를 CLOSED로 변경
         shopRepository.save(shopEntity);
     }
 
@@ -60,12 +60,19 @@ public class ShopService {
     public List<ShopEntity> getAllShops() {
         //  삭제 처리된 데이터까지 다 조회됨
         //  return shopRepository.findAll();
-        return shopRepository.findByDeletedAtIsNull();
+        //  재오픈 하면 어쩔껀데?
+        //return shopRepository.findByDeletedAtIsNull();
+        return shopRepository.findByState(ShopState.OPEN);
     }
 
     @Transactional(readOnly = true)
     public ShopEntity getShopById(Integer id) {
         return shopRepository.findById(id).orElseThrow(() -> new RuntimeException("Shop not found"));
+    }
+
+    @Transactional(readOnly = true)
+    public List<ShopEntity>getRandomShop(){
+        return shopRepository.findRandomShops();
     }
 
 

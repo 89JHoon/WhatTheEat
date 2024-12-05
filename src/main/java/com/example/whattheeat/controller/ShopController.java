@@ -2,6 +2,7 @@ package com.example.whattheeat.controller;
 
 import com.example.whattheeat.entity.ShopEntity;
 import com.example.whattheeat.service.ShopService;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -43,10 +44,16 @@ public class ShopController {
         return ResponseEntity.ok(shopService.getAllShops());
     }
 
-    //가게 조회(단건조회)
+    //가게 조회(단건 조회)
     @GetMapping("/{id}")
     public ResponseEntity<ShopEntity> getShopById( @PathVariable  Integer id){
         return ResponseEntity.ok(shopService.getShopById(id));
+    }
+
+    //가게 조회(랜덤 조회)
+    @GetMapping("/random")
+    public ResponseEntity<List<ShopEntity>> getRandomShop(){
+        return ResponseEntity.ok(shopService.getRandomShop());
     }
 
 }
