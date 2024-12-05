@@ -49,7 +49,7 @@ public class MenuService {
     }
 
     public void deleteMenu(MenuRequestDto menuRequestDto){
-        Menu menu = new Menu();
+        Menu menu = new Menu(menuRequestDto);
         menu.deleteMenu(true);
         menuRepository.save(menu);
     }
