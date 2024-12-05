@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
@@ -27,6 +28,7 @@ public class User extends BaseEntity{
     private String email;
 
     // 유저 비밀번호
+    @Setter
     @Column(nullable = false, length = 100)
     private String password;
 
@@ -35,6 +37,7 @@ public class User extends BaseEntity{
     private String name;
 
     // 유저 핸드폰 번호
+    @Setter
     @Column(nullable = false, length = 50)
     private String phoneNumber;
 

@@ -1,10 +1,7 @@
 package com.example.whattheeat.controller;
 
 import com.example.whattheeat.constant.Const;
-import com.example.whattheeat.dto.LoginRequestDto;
-import com.example.whattheeat.dto.UserRequestDto;
-import com.example.whattheeat.dto.UserResponseDto;
-import com.example.whattheeat.dto.WithdrawRequestDto;
+import com.example.whattheeat.dto.*;
 import com.example.whattheeat.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -60,6 +57,17 @@ public class UserController {
 
         sessionValidate(servletRequest);
         return new ResponseEntity<>("로그아웃 되었습니다.", HttpStatus.OK);
+    }
+
+    // 회원 수정
+    @PatchMapping("/edit")
+    public ResponseEntity<UserResponseDto> edit(
+            @Valid @RequestBody EditRequestDto requestDto,
+            @SessionAttribute(name = Const.LOGIN_USER) Long loginId) {
+
+        UserResponseDto responseDto = userService.edit(loginId, requestDto);
+
+        return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
 
     private static void sessionValidate(HttpServletRequest servletRequest) {

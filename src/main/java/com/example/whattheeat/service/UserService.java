@@ -1,16 +1,14 @@
 package com.example.whattheeat.service;
 
 import com.example.whattheeat.config.PasswordEncoder;
-import com.example.whattheeat.dto.LoginRequestDto;
-import com.example.whattheeat.dto.UserRequestDto;
-import com.example.whattheeat.dto.UserResponseDto;
-import com.example.whattheeat.dto.WithdrawRequestDto;
+import com.example.whattheeat.dto.*;
 import com.example.whattheeat.entity.User;
 import com.example.whattheeat.repository.UserRepository;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 @Service
@@ -44,6 +42,15 @@ public class UserService {
         return findUser.getId();
     }
 
+    // 회원 수정
+    @Transactional
+    public UserResponseDto edit(Long loginId, EditRequestDto requestDto) {
+        User loginUser = findUserById(loginId);
+        checkingPassword(requestDto.getOldPassword(), loginUser);
+        eidtUser(requestDto, loginUser);
+
+        return new UserResponseDto(loginUser.getId(), loginUser.getEmail(), loginUser.getName(), loginUser.getPhoneNumber(), loginUser.getUserRole());
+    }
 
     // 이메일 중복 체크
     private void checkDuplicateEmail(UserRequestDto requestDto) {
@@ -86,4 +93,9 @@ public class UserService {
         );
     }
 
+
+    private static void eidtUser(EditRequestDto requestDto, User loginUser) {
+        loginUser.setPassword(requestDto.getNewPassword());
+        loginUser.setPhoneNumber(requestDto.getPhoneNumber());
+    }
 }
