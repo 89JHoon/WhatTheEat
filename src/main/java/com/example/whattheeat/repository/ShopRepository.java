@@ -22,7 +22,7 @@ public interface ShopRepository extends JpaRepository<ShopEntity, Integer> {
 
     //랜덤 조회(선택 컬럼)
     //ORDER BY RAND()는 전체 테이블 스캔이 필요해 대용량 데이터에서 매우 느림
-    @Query("SELECT new com.example.whattheeat.dto.ShopDto(s.name, s.minimumPrice, s.openTime, s.closeTime) FROM ShopEntity s WHERE s.state = 'OPEN' ORDER BY function('RAND') LIMIT 5")
+    @Query("SELECT new com.example.whattheeat.dto.ShopDto(s.name, s.minimumPrice, s.openTime, s.closeTime, CAST(s.state AS string)) FROM ShopEntity s WHERE s.state = 'OPEN' ORDER BY function('RAND') LIMIT 5")
     List<ShopDto> findRandomShopsSelectColum();
 
 
