@@ -2,7 +2,7 @@ package com.example.whattheeat.controller;
 
 import com.example.whattheeat.dto.MenuRequestDto;
 import com.example.whattheeat.dto.MenuResponseDto;
-import com.example.whattheeat.dto.UpdateMenuRequestDto;
+import com.example.whattheeat.dto.MenuUpdateResponseDto;
 import com.example.whattheeat.service.MenuService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -21,23 +21,27 @@ public class MenuController {
     //메뉴 생성
     @PostMapping
 
-    public ResponseEntity<MenuResponseDto> createMenu(@PathVariable int shopId,@RequestBody MenuRequestDto dto,
+    public ResponseEntity<MenuResponseDto> createMenu(@RequestBody MenuRequestDto dto,
                                                       HttpServletRequest request) {
         HttpSession session = request.getSession(false);
+        //메뉴 생성 service
+        MenuResponseDto menuResponseDto = menuService.createMenu(dto.getShopId(),dto.getName(),dto.getPrice());
 
-        MenuResponseDto menuResponseDto = menuService.createMenu(shopId,dto.getName(),dto.getPrice());
-
-        return new ResponseEntity<>(menuResponseDto, HttpStatus.CREATED);
+        return new ResponseEntity<>(menuResponseDto, HttpStatus.CREATED); //dto로 반환
     }
     //메뉴 수정
     @PutMapping("/{menuId}")
-    public ResponseEntity<MenuResponseDto> updateMenu(@ModelAttribute UpdateMenuRequestDto requestDto){
-        MenuResponseDto menuResponseDto = menuService.updateMenu(
-                requestDto.getShopId(),
-                requestDto.getName(),
-                requestDto.getPrice()
+    public ResponseEntity<MenuUpdateResponseDto> updateMenu(@RequestBody MenuRequestDto dto,
+                                                      HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        //메뉴 수정 service
+        MenuUpdateResponseDto menuResponseDto = menuService.updateMenu(
+                dto.getShopId(),
+                dto.getName(),
+                dto.getPrice()
 
         );
+        //dto로 반혼
         return new ResponseEntity<>(menuResponseDto, HttpStatus.OK);
     }
 }
