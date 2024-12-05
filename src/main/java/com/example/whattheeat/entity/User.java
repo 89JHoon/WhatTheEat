@@ -5,9 +5,14 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
 @Getter
 @Entity
+@Table
+@SQLDelete(sql = "update user set deleted = true  where id = ?")
+@SQLRestriction("deleted = false")
 @NoArgsConstructor
 public class User extends BaseEntity{
 
