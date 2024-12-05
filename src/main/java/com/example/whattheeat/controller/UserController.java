@@ -1,10 +1,14 @@
 package com.example.whattheeat.controller;
 
 import com.example.whattheeat.constant.Const;
+import com.example.whattheeat.dto.LoginRequestDto;
 import com.example.whattheeat.dto.UserRequestDto;
 import com.example.whattheeat.dto.UserResponseDto;
 import com.example.whattheeat.dto.WithdrawRequestDto;
 import com.example.whattheeat.service.UserService;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -38,5 +42,21 @@ public class UserController {
         return new ResponseEntity<>("회원 탈퇴가 완료되었습니다.", HttpStatus.OK);
     }
 
+    // 로그인
+    @PostMapping("/login")
+    public ResponseEntity<String> login(
+            @Valid @RequestBody LoginRequestDto requestDto,
+            HttpServletRequest servletRequest) {
+
+        Long loginId = userService.login(requestDto);
+        setSession(servletRequest, loginId);
+
+        return new ResponseEntity<>("로그인이 완료되었습니다.", HttpStatus.OK);
+    }
+
+    private void setSession(HttpServletRequest servletRequest, Long loginId) {
+        HttpSession session = servletRequest.getSession();
+        session.setAttribute(Const.LOGIN_USER, loginId);
+    }
 }
 

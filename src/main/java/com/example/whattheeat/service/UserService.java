@@ -1,6 +1,7 @@
 package com.example.whattheeat.service;
 
 import com.example.whattheeat.config.PasswordEncoder;
+import com.example.whattheeat.dto.LoginRequestDto;
 import com.example.whattheeat.dto.UserRequestDto;
 import com.example.whattheeat.dto.UserResponseDto;
 import com.example.whattheeat.dto.WithdrawRequestDto;
@@ -28,10 +29,19 @@ public class UserService {
         return new UserResponseDto(saveUser.getId(), saveUser.getEmail(), saveUser.getName(), saveUser.getPhoneNumber(),saveUser.getUserRole());
     }
 
+    // 회원 탈퇴
     public void withdraw(Long userId, WithdrawRequestDto requestDto) {
         User findUser = findUserById(userId);
-        checkingPassword(requestDto, findUser);
+        checkingPassword(requestDto.getPassword(), findUser);
         userRepository.delete(findUser);
+    }
+
+    // 로그인
+    public Long login(LoginRequestDto requestDto) {
+        User findUser = findUserByEmail(requestDto);
+        checkingPassword(requestDto.getPassword(), findUser);
+
+        return findUser.getId();
     }
 
 
@@ -57,15 +67,23 @@ public class UserService {
     }
 
     // 비밀번호 체크
-    private void checkingPassword(WithdrawRequestDto requestDto, User findUser) {
-        if (!passwordEncoder.matches(requestDto.getPassword(), findUser.getPassword())) {
+    private void checkingPassword(String password, User findUser) {
+        if (!passwordEncoder.matches(password, findUser.getPassword())) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "비밀번호가 맞지 않습니다");
         }
     }
 
     private User findUserById(Long userId) {
         return userRepository.findById(userId).orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "유효하지 않는 ID입니다")
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "유효하지 않는 ID 입니다")
         );
     }
+
+
+    private User findUserByEmail(LoginRequestDto requestDto) {
+        return userRepository.findByEmail(requestDto.getEmail()).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "해당 이메일은 존재하지 않습니다")
+        );
+    }
+
 }
