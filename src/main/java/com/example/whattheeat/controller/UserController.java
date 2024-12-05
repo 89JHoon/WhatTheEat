@@ -2,6 +2,7 @@ package com.example.whattheeat.controller;
 
 import com.example.whattheeat.constant.Const;
 import com.example.whattheeat.dto.*;
+import com.example.whattheeat.dto.common.Authentication;
 import com.example.whattheeat.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -44,8 +45,8 @@ public class UserController {
             @Valid @RequestBody LoginRequestDto requestDto,
             HttpServletRequest servletRequest) {
 
-        Long loginId = userService.login(requestDto);
-        setSession(servletRequest, loginId);
+        Authentication authentication = userService.login(requestDto);
+        setSession(servletRequest, authentication);
 
         return new ResponseEntity<>("로그인이 되었습니다.", HttpStatus.OK);
     }
@@ -77,9 +78,10 @@ public class UserController {
         }
     }
 
-    private void setSession(HttpServletRequest servletRequest, Long loginId) {
+    private void setSession(HttpServletRequest servletRequest, Authentication authentication) {
         HttpSession session = servletRequest.getSession();
-        session.setAttribute(Const.LOGIN_USER, loginId);
+        session.setAttribute(Const.LOGIN_USER, authentication.getId());
+        session.setAttribute(Const.AUTHENTICATION, authentication.getUserRole());
     }
 }
 

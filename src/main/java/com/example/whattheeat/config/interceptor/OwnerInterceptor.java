@@ -1,28 +1,28 @@
 package com.example.whattheeat.config.interceptor;
 
 import com.example.whattheeat.constant.Const;
+import com.example.whattheeat.enums.UserRole;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.HandlerInterceptor;
 
-@Component
-public class AuthInterceptor implements HandlerInterceptor {
-
+public class OwnerInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
         HttpSession session = request.getSession(false);
 
         if (session == null) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "로그인이 필요합니다.");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "세션이 끊어졌습니다");
         }
 
-        if (session.getAttribute(Const.LOGIN_USER) == null) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "로그인이 필요합니다.");
+        UserRole userRole = UserRole.valueOf((String) session.getAttribute(Const.AUTHENTICATION));
+
+        if (userRole != UserRole.OWNER) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "OWNER 권한이 없습니다");
         }
 
         return true;

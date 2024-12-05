@@ -2,6 +2,7 @@ package com.example.whattheeat.service;
 
 import com.example.whattheeat.config.PasswordEncoder;
 import com.example.whattheeat.dto.*;
+import com.example.whattheeat.dto.common.Authentication;
 import com.example.whattheeat.entity.User;
 import com.example.whattheeat.repository.UserRepository;
 import jakarta.validation.Valid;
@@ -35,11 +36,11 @@ public class UserService {
     }
 
     // 로그인
-    public Long login(LoginRequestDto requestDto) {
+    public Authentication login(LoginRequestDto requestDto) {
         User findUser = findUserByEmail(requestDto);
         checkingPassword(requestDto.getPassword(), findUser);
 
-        return findUser.getId();
+        return new Authentication(findUser.getId(), findUser.getUserRole());
     }
 
     // 회원 수정
