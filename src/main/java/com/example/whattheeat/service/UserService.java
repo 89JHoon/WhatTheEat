@@ -47,7 +47,7 @@ public class UserService {
 
     // 이메일 중복 체크
     private void checkDuplicateEmail(UserRequestDto requestDto) {
-        if (userRepository.existsByEmail(requestDto.getEmail())) {
+        if (userRepository.existsByEmail(requestDto.getEmail()) == 1) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "중복된 이메일입니다");
         }
     }
