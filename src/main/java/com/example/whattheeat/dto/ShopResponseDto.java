@@ -1,10 +1,12 @@
 package com.example.whattheeat.dto;
 
+import com.example.whattheeat.entity.Shop;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.time.LocalTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @AllArgsConstructor
@@ -29,5 +31,25 @@ public class ShopResponseDto {
         this.state = state;
         this.menus = menus;
     }
+
+    public static ShopResponseDto from(Shop shop) {
+        return new ShopResponseDto(
+                shop.getId(),
+                shop.getName(),
+                shop.getMinimumPrice(),
+                shop.getOpenTime(),
+                shop.getCloseTime(),
+                shop.getState().toString(),
+                shop.getMenus().stream()
+                        .map(menu -> new MenuResponseDto(
+                                menu.getId(),
+                                menu.getName(),
+                                menu.getPrice()
+                        ))
+                        .collect(Collectors.toList())
+        );
+    }
+
+
 }
 
