@@ -6,15 +6,16 @@ import java.math.BigDecimal;
 
 @Getter
 public class MenuResponseDto {
-    private int shopId;
-    private int id;
-    private String name;
-    private BigDecimal price;
+    private final Long shopId;
+    private final Long id;
+    private final String name;
+    private final BigDecimal price;
 
-    public MenuResponseDto(int shopId, int id, String name, BigDecimal price) {
-    this.shopId = shopId;
-    this.id = id;
-    this.name = name;
-    this.price = price;}
+    public MenuResponseDto(Long shopId, Long id, String name, BigDecimal price) {
+        this.shopId = shopId;
+        this.id = id;
+        this.name = name;
+        this.price = price;
+    }
 }
 

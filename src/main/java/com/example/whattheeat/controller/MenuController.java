@@ -15,45 +15,44 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/menus")
 @RequiredArgsConstructor
 public class MenuController {
+
     private final MenuService menuService;
 
-
     //메뉴 생성
-    @PostMapping
+    @PostMapping("/shop/{shopId}")
+    public ResponseEntity<MenuResponseDto> createMenu(
+            @PathVariable Long shopId,
+            @RequestBody MenuRequestDto dto,
+            @SessionAttribute("authenticatedUserId") Long userId) {
 
-    public ResponseEntity<MenuResponseDto> createMenu(@PathVariable int shopId, @RequestBody MenuRequestDto dto,
-                                                      HttpServletRequest request) {
-        //세션에서 로그인된 사용자 정보 불러오기
-        int userId = getUserId(request);
         //메뉴 생성하고, 서비스 실행
-
         //메뉴 생성 service
         MenuResponseDto menuResponseDto = menuService.createMenu(userId,shopId,dto.getName(),dto.getPrice());
         //dto 반환
-        return new ResponseEntity<>(menuResponseDto, HttpStatus.CREATED);
+        return ResponseEntity.status(HttpStatus.CREATED).body(menuResponseDto);
     }
     //메뉴 수정
     @PutMapping("/{menuId}")
-    public ResponseEntity<MenuUpdateResponseDto> updateMenu(@PathVariable int shopId, @PathVariable int menuId,
-    @RequestBody MenuRequestDto dto, HttpServletRequest request) {
-        //세션에서 로그인된 사용자 정보 가져오기
-        int userId = getUserId(request);
+    public ResponseEntity<MenuUpdateResponseDto> updateMenu(
+            @PathVariable Long shopId,
+            @PathVariable Long menuId,
+            @RequestBody MenuRequestDto dto,
+            @SessionAttribute("authenticatedUserId") Long userId) {
+
         //메뉴 수정 service 실행
         MenuUpdateResponseDto menuResponseDto = menuService.updateMenu(userId,shopId,menuId,dto.getName(),dto.getPrice());
-        //dto로 반혼
-        return new ResponseEntity<>(menuResponseDto, HttpStatus.OK);
-    }
-    @DeleteMapping("/{menuId}")
-    public ResponseEntity<Void> deleteMenu(@PathVariable int shopId,@PathVariable int menuId, HttpServletRequest request) {
-        //세션에서 로그인된 사용자 정보 가져오기
-        int userId = getUserId(request);
-        menuService.deleteMenu(userId,shopId,menuId);
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-    private static int getUserId(HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
-        int userId = (int)session.getAttribute("LOGIN_USER");
-        return userId;
+        //dto로 반환
+        return ResponseEntity.ok(menuResponseDto);
     }
 
+    //메뉴 삭제
+    @DeleteMapping("/{menuId}")
+    public ResponseEntity<Void> deleteMenu(
+            @PathVariable Long shopId,
+            @PathVariable Long menuId,
+            @SessionAttribute("authenticatedUserId") Long userId) {
+
+        menuService.deleteMenu(userId,shopId,menuId);
+        return ResponseEntity.noContent().build();
+    }
 }

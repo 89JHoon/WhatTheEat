@@ -10,8 +10,4 @@ public class MenuRequestDto {
 
     private String name;
     private BigDecimal price;
-
-
-
-    }
-
+}

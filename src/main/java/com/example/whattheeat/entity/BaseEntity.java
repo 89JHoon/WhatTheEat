@@ -26,6 +26,5 @@ public abstract class BaseEntity {
     @Column(name = "deleted_at")
     // 삭제 시간
     // soft delete 시 값을 추가
-    @Column
     LocalDateTime deletedAt;
 }
