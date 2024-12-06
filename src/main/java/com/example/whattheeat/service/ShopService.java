@@ -59,7 +59,7 @@ public class ShopService {
 
 
     @Transactional
-    public void deleteShop(Integer id) {
+    public void deleteShop(Integer id ,Long userId) {
         Shop shopEntity = shopRepository.findById(id).orElseThrow(() -> new RuntimeException("Shop not found"));
 
         shopEntity.setDeletedAt(LocalDateTime.now());

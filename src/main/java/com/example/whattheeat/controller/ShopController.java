@@ -22,7 +22,7 @@ public class ShopController {
     @PostMapping
     public ResponseEntity<ShopResponseDto> createShop(@RequestBody ShopRequestDto shopRequestDto,
                                                       @SessionAttribute("authenticatedUserId") Long userId
-                                                      ) {
+    ) {
 
         //사장님인지 검증
 //        if(!"OWENR".equals(role)){
@@ -38,7 +38,7 @@ public class ShopController {
                                            @SessionAttribute("authenticatedUserId") Long userId
 
     ) {
-        shopService.deleteShop(id,userId);
+        shopService.deleteShop(id, userId);
         return ResponseEntity.noContent().build();
     }
 
@@ -54,10 +54,11 @@ public class ShopController {
     }
 
     //가게 조회 (전체 조회)
-    @GetMapping
-    public ResponseEntity<List<ShopResponseDto>> getAllShops() {
-        return ResponseEntity.ok(shopService.getAllShops());
-    }
+    //일단 사용 x
+//    @GetMapping
+//    public ResponseEntity<List<ShopResponseDto>> getAllShops() {
+//        return ResponseEntity.ok(shopService.getAllShops());
+//    }
 
     //가게 조회(단건 조회)
     @GetMapping("/{id}")
