@@ -116,6 +116,7 @@ public class ShopService {
     @Transactional(readOnly = true)
     public List<ShopResponseDto> getRandomShops() {
         // return shopRepository.findRandomShops();
-        return shopRepository.findRandomShopsWithSelectedColumns();
+       //todo - shop을 shopResponseDto로 치환
+        return null;
     }
 }
