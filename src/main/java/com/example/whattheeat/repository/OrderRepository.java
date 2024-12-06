@@ -2,9 +2,11 @@ package com.example.whattheeat.repository;
 
 import com.example.whattheeat.entity.Order;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
     //특정 고객의 주문내역 조회
     List<Order> findByCustomerId(Long customerId);
