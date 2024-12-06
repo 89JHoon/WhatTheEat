@@ -36,7 +36,7 @@ public class ShopService {
                 .orElseThrow(() -> new CustomException("User not found"));
 
         //가게 이름 중복 확인
-        if(shopRepository.existsByName(shopRequestDto.getName())) {
+        if (shopRepository.existsByName(shopRequestDto.getName())) {
             throw new CustomException("이미 등록된 가게 이름입니다.");
         }
 
@@ -60,11 +60,11 @@ public class ShopService {
 
     //가게 폐업
     @Transactional
-    public void deleteShop(Long id ,Long userId) {
+    public void deleteShop(Long id, Long userId) {
         Shop shop = shopRepository.findById(id)
                 .orElseThrow(() -> new CustomException("Shop not found"));
 
-        if(!shop.getOwner().getId().equals(userId)){
+        if (!shop.getOwner().getId().equals(userId)) {
             throw new IllegalArgumentException("가게 폐업 권한이 없습니다.");
         }
 
@@ -77,7 +77,7 @@ public class ShopService {
         Shop shop = shopRepository.findById(id)
                 .orElseThrow(() -> new CustomException("shop not found"));
 
-        if(!shop.getOwner().getId().equals(userId)){
+        if (!shop.getOwner().getId().equals(userId)) {
             throw new IllegalArgumentException("가게 수정 권한이 없습니다.");
         }
         //수정할 내용
@@ -115,8 +115,10 @@ public class ShopService {
 
     @Transactional(readOnly = true)
     public List<ShopResponseDto> getRandomShops() {
-        // return shopRepository.findRandomShops();
-       //todo - shop을 shopResponseDto로 치환
-        return null;
+        List<Shop> randomShops = shopRepository.findRandomShopsWithSelectedColumns();
+        return randomShops.stream()
+                .map(ShopResponseDto::new)
+                .collect(Collectors.toList());
     }
+
 }

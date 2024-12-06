@@ -53,4 +53,14 @@ public class ShopResponseDto {
                 menuResponses
         );
     }
+    public ShopResponseDto(Shop shop) {
+        this.id = shop.getId();
+        this.name = shop.getName();
+        this.minimumPrice = shop.getMinimumPrice();
+        this.openTime = shop.getOpenTime();
+        this.closeTime = shop.getCloseTime();
+        this.state = "";
+        this.menus = Collections.emptyList(); // 빈 리스트로 초기화
+    }
+
 }
