@@ -22,65 +22,75 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-
 public class ShopService {
+
     private final ShopRepository shopRepository;
     private final UserRepository userRepository;
     private static final int MAX_SHOP_COUNT = 3;
 
+    //가게 생성
     @Transactional
     public ShopResponseDto createShop(ShopRequestDto shopRequestDto, Long userId) {
-        try {
-            //사용자 조회
-            User user = userRepository.findById(userId)
-                    .orElseThrow(() -> new RuntimeException("User not found"));
+        //사용자 조회
+        User owner = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException("User not found"));
 
-            // 운영 중인 가게 수 확인
-            Long activeShopsCount = shopRepository.countActiveShopsByUserId(userId);
-            if (activeShopsCount >= MAX_SHOP_COUNT) {
-                throw new IllegalArgumentException("사장님은 최대 " + MAX_SHOP_COUNT + "개의 가게만 운영할 수 있습니다.");
-            }
-
-            Shop shop = Shop.builder()
-                    .name(shopRequestDto.getName())
-                    .user(user)
-                    .openTime(shopRequestDto.getOpenTime())
-                    .closeTime(shopRequestDto.getCloseTime())
-                    .minimumPrice(shopRequestDto.getMinimumPrice())
-                    .state(ShopState.OPEN)
-                    .build();
-            return ShopResponseDto.from(shopRepository.save(shop));
-        } catch (DataIntegrityViolationException e) {
-            log.error("가게생성실패: 중복된 이름-{}", shopRequestDto.getName());
-            throw new DataIntegrityViolationException("이미 등록된 가게입니다.");
+        //가게 이름 중복 확인
+        if(shopRepository.existsByName(shopRequestDto.getName())) {
+            throw new CustomException("이미 등록된 가게 이름입니다.");
         }
 
+        // 운영 중인 가게 수 확인
+        Long activeShopsCount = shopRepository.countActiveShopsByUserId(userId);
+        if (activeShopsCount >= MAX_SHOP_COUNT) {
+            throw new IllegalArgumentException("사장님은 최대 " + MAX_SHOP_COUNT + "개의 가게만 운영할 수 있습니다.");
+        }
+
+        Shop shop = Shop.builder()
+                .name(shopRequestDto.getName())
+                .owner(owner)
+                .openTime(shopRequestDto.getOpenTime())
+                .closeTime(shopRequestDto.getCloseTime())
+                .minimumPrice(shopRequestDto.getMinimumPrice())
+                .state(ShopState.OPEN)
+                .build();
+
+        return ShopResponseDto.from(shopRepository.save(shop));
     }
 
-
+    //가게 폐업
     @Transactional
-    public void deleteShop(Integer id ,Long userId) {
-        Shop shopEntity = shopRepository.findById(id).orElseThrow(() -> new RuntimeException("Shop not found"));
+    public void deleteShop(Long id ,Long userId) {
+        Shop shop = shopRepository.findById(id)
+                .orElseThrow(() -> new CustomException("Shop not found"));
 
-        shopEntity.setDeletedAt(LocalDateTime.now());
-        shopEntity.setState(ShopState.CLOSED);  // 상태를 CLOSED로 변경
-        shopRepository.save(shopEntity);
+        if(!shop.getOwner().getId().equals(userId)){
+            throw new IllegalArgumentException("가게 폐업 권한이 없습니다.");
+        }
+
+        shop.closeShop();
     }
 
+    //가게 수정
     @Transactional
-    public ShopResponseDto updateShop(Integer id, ShopRequestDto shopRequestDto) {
-        Shop shop = shopRepository.findById(id).orElseThrow(() -> new RuntimeException("shop not found"));
+    public ShopResponseDto updateShop(Long id, ShopRequestDto shopRequestDto, Long userId) {
+        Shop shop = shopRepository.findById(id)
+                .orElseThrow(() -> new CustomException("shop not found"));
 
+        if(!shop.getOwner().getId().equals(userId)){
+            throw new IllegalArgumentException("가게 수정 권한이 없습니다.");
+        }
         //수정할 내용
         //일단 가게 이름은 변경 못하는 걸로
         //shop.setName(updateShopEntity.getName());
+        shop.updateShopDetails(
+                shopRequestDto.getOpenTime(),
+                shopRequestDto.getCloseTime(),
+                shopRequestDto.getMinimumPrice(),
+                ShopState.valueOf(shopRequestDto.getState())
+        );
 
-        shop.setOpenTime(shopRequestDto.getOpenTime());
-        shop.setCloseTime(shopRequestDto.getCloseTime());
-        shop.setMinimumPrice(shopRequestDto.getMinimumPrice());
-        shop.setState(ShopState.valueOf(shopRequestDto.getState()));
-
-        return ShopResponseDto.from( shopRepository.save(shop));
+        return ShopResponseDto.from(shop);
     }
 
     // 필요하지 않는 부분
@@ -96,35 +106,16 @@ public class ShopService {
 //    }
 
     @Transactional(readOnly = true)
-    public ShopResponseDto getShopById(Integer id) {
-        Shop shop = shopRepository.findByIdWithMenus(id).orElseThrow(() -> new RuntimeException("Shop not found"));
+    public ShopResponseDto getShopById(Long id) {
+        Shop shop = shopRepository.findByIdWithMenus(id)
+                .orElseThrow(() -> new RuntimeException("Shop not found"));
 
-        List<MenuResponseDto> menus = shop.getMenus().stream()
-                .map(menu -> new MenuResponseDto(
-                        menu.getId(),
-                        menu.getName(),
-                        menu.getPrice()
-                        //    menu.getMenuStatus()
-                ))
-                .collect(Collectors.toList());
-        if (menus.isEmpty()) {
-            throw new CustomException("메뉴가 준비중입니다. 죄송합니다.");
-        }
-        return new ShopResponseDto(
-                shop.getId(),
-                shop.getName(),
-                shop.getOpenTime(),
-                shop.getCloseTime(),
-                shop.getMinimumPrice(),
-                shop.getState().toString(),
-                menus);
+        return ShopResponseDto.from(shop);
     }
 
     @Transactional(readOnly = true)
     public List<ShopResponseDto> getRandomShops() {
         // return shopRepository.findRandomShops();
-        return shopRepository.findRandomShopsSelectColum();
+        return shopRepository.findRandomShopsWithSelectedColumns();
     }
-
-
 }

@@ -1,25 +1,19 @@
 package com.example.whattheeat.entity;
 
-
 import com.example.whattheeat.enums.ShopState;
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
-
 @Entity
 @Table(name = "shop")
 @NoArgsConstructor
 @Getter
-@Setter
+@AllArgsConstructor
 @Builder
-
 public class Shop extends BaseEntity {
 
     //가게 ID
@@ -30,43 +24,48 @@ public class Shop extends BaseEntity {
 
     //가게 이름
     //가게 이름은 중복이 안됨
-    @Column(name = "name", unique = true, length = 50)
+    @Column(name = "name", unique = true, nullable = false, length = 50)
     private String name;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "owner_id", nullable = false)
+    private User owner;
 
     //가게 영업 시간
-    @Column(name = "opentime", columnDefinition = "TIME")
+    @Column(name = "opentime", columnDefinition = "TIME", nullable = false)
     private LocalTime openTime;
 
-    @Column(name = "closetime", columnDefinition = "TIME")
+    @Column(name = "closetime", columnDefinition = "TIME", nullable = false)
     private LocalTime closeTime;
 
-
-    @Column(name = "deleted_at")
-    private LocalDateTime deletedAt;
-
     // 가게 최소 주문
-    @Column(name = "minimum_price")
+    @Column(name = "minimum_price", nullable = false)
     private Integer minimumPrice;
 
     //가게 상태
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private ShopState state;
 
-    @Builder
-    public Shop(String name, User user, LocalTime openTime, LocalTime closeTime, Integer minimumPrice, ShopState state) {
-        this.name = name;
-        this.user = user;
+    //가게 조회시 메뉴도 함께
+    @OneToMany(mappedBy = "shop", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Menu> menus;
+
+    //폐업
+    public void closeShop(){
+        this.state = ShopState.CLOSED;
+        this.setDeletedAt(LocalDateTime.now());
+    }
+
+    private void setDeletedAt(LocalDateTime deletedAt){
+        this.deletedAt = deletedAt;
+    }
+
+    //가게 정보 수정
+    public void updateShopDetails(LocalTime openTime, LocalTime closeTime, Integer minimumPrice, ShopState state){
         this.openTime = openTime;
         this.closeTime = closeTime;
         this.minimumPrice = minimumPrice;
         this.state = state;
     }
-
-    //가게 조회시 메뉴도 함께
-    @OneToMany(mappedBy = "shopId", fetch = FetchType.LAZY)
-    private List<Menu> menus;
 }

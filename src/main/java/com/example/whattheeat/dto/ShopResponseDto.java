@@ -1,15 +1,14 @@
 package com.example.whattheeat.dto;
 
 import com.example.whattheeat.entity.Shop;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.time.LocalTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Getter
-@AllArgsConstructor
 public class ShopResponseDto {
     private final Long id;
     private final String name;
@@ -20,14 +19,13 @@ public class ShopResponseDto {
 
     private final List<MenuResponseDto> menus;  // 메뉴 리스트 추가
 
-
-    public ShopResponseDto(Long id, String name, LocalTime openTime, LocalTime closeTime,
-                           Integer minimumPrice, String state, List<MenuResponseDto> menus) {
+    public ShopResponseDto(Long id, String name, Integer minimumPrice, LocalTime openTime, LocalTime closeTime,
+                            String state, List<MenuResponseDto> menus) {
         this.id = id;
         this.name = name;
+        this.minimumPrice = minimumPrice;
         this.openTime = openTime;
         this.closeTime = closeTime;
-        this.minimumPrice = minimumPrice;
         this.state = state;
         this.menus = menus;
     }
@@ -40,16 +38,14 @@ public class ShopResponseDto {
                 shop.getOpenTime(),
                 shop.getCloseTime(),
                 shop.getState().toString(),
-                shop.getMenus().stream()
+                shop.getMenus() != null ? shop.getMenus().stream()
                         .map(menu -> new MenuResponseDto(
                                 menu.getId(),
                                 menu.getName(),
                                 menu.getPrice()
                         ))
                         .collect(Collectors.toList())
+                        : Collections.emptyList()
         );
     }
-
-
 }
-

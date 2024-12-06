@@ -12,10 +12,12 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface ShopRepository extends JpaRepository<Shop, Integer> {
+public interface ShopRepository extends JpaRepository<Shop, Long> {
+
+    boolean existsByName(String name);
 
     //상태가 오픈인 가게만 조회
-    List<ShopResponseDto> findByState(ShopState state);
+    List<Shop> findByState(ShopState state);
 
     //랜덤 조회(전체컬럼)
     //ORDER BY RAND()는 전체 테이블 스캔이 필요해 대용량 데이터에서 매우 느림
@@ -24,16 +26,15 @@ public interface ShopRepository extends JpaRepository<Shop, Integer> {
 
     //랜덤 조회(선택 컬럼)
     //ORDER BY RAND()는 전체 테이블 스캔이 필요해 대용량 데이터에서 매우 느림
-    @Query("SELECT new com.example.whattheeat.dto.ShopResponseDto(s.name, s.minimumPrice, s.openTime, s.closeTime, CAST(s.state AS string)) FROM Shop s WHERE s.state = 'OPEN' ORDER BY function('RAND') LIMIT 5")
-    List<ShopResponseDto> findRandomShopsSelectColum();
+    @Query("SELECT new com.example.whattheeat.dto.ShopResponseDto(s.name, s.minimumPrice, s.openTime, s.closeTime, CAST(s.state AS string))" +
+            "FROM Shop s WHERE s.state = 'OPEN' ORDER BY function('RAND')")
+    List<ShopResponseDto> findRandomShopsWithSelectedColumns();
 
     // 가게 단건 조회시 메뉴도 함께 나오기
     @Query("SELECT s FROM Shop s LEFT JOIN FETCH s.menus WHERE s.id = :id")
-    Optional<Shop> findByIdWithMenus(@Param("id") Integer id);
+    Optional<Shop> findByIdWithMenus(@Param("id") Long id);
 
     // 폐업 상태가 아닌 가게 수 조회
-    @Query("SELECT COUNT(s) FROM Shop s WHERE s.user.id = :userId AND s.state != 'CLOSED'")
-    long countActiveShopsByUserId(@Param("userId") Long userId);
-
+    @Query("SELECT COUNT(s) FROM Shop s WHERE s.owner.id = :ownerId AND s.state != 'CLOSED'")
+    long countActiveShopsByUserId(@Param("ownerId") Long ownerId);
 }
-
