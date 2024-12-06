@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 
 @Entity
 @Getter
@@ -36,7 +38,7 @@ public class Order extends BaseEntity{
     //가게 데이터를 지연로딩
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "shop_id", nullable = false)
-    private ShopEntity shop;
+    private Shop shop;
 
     //주문 상태
     //enum 값을 문자열로 지정
@@ -54,7 +56,7 @@ public class Order extends BaseEntity{
     //총 주문 가격
     //calculateTotalPrice() 메서드에 의해 계산
     @Column(nullable = false)
-    private int totalPrice;
+    private BigDecimal totalPrice;
 
     //배달 주소
     //고객이 입력한 주소 저장
@@ -62,13 +64,13 @@ public class Order extends BaseEntity{
     private String address;
 
     //주문 엔티티 생성자를 통해 필수 정보를 초기화
-    public Order(User customer, Menu menu, ShopEntity shop, int quantity, String address){
+    public Order(User customer, Menu menu, Shop shop, int quantity, String address){
         this.customer = customer;
         this.menu = menu;
         this.shop = shop;
         this.quantity = quantity;
         this.address = address;
-        this.totalPrice = menu.getPrice() * quantity;
+        this.totalPrice = menu.getPrice().multiply(BigDecimal.valueOf(quantity));
     }
 
     public void updateOrderStatus(OrderStatus newStatus){
@@ -78,7 +80,12 @@ public class Order extends BaseEntity{
             //상태를 변경할 수 없음
             throw new IllegalArgumentException("배달이 완료되어 주문 상태를 변경할 수 없습니다.");
         }
-        //배달 완료 상태가 아니라면 전달된 상태로 변경
+        if(!this.orderStatus.canTransitionTo(newStatus)){
+            throw new IllegalArgumentException("잘못된 주문 상태 전환입니다: " +
+                    this.orderStatus + "에서" + newStatus + "로 변경할 수 없습니다.");
+        }
+        //배달 완료 상태이면 상태변경 못함
+        //상태변경은 순서대로만 가능
         this.orderStatus = newStatus;
     }
 }

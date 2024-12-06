@@ -8,5 +8,16 @@ public enum OrderStatus {
     PREPARING, //조리 중
     COOKED, //조리 완료
     DELIVERING, //배달 중
-    DELIVERED //배달 완료
+    DELIVERED; //배달 완료
+
+    public boolean canTransitionTo(OrderStatus nextStatus){
+        return switch (this){
+            case ORDERED -> nextStatus == ACCEPTED;
+            case ACCEPTED -> nextStatus == PREPARING;
+            case PREPARING -> nextStatus == COOKED;
+            case COOKED -> nextStatus == DELIVERING;
+            case DELIVERING -> nextStatus == DELIVERED;
+            case DELIVERED -> false;
+        };
+    }
 }
