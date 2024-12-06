@@ -54,6 +54,9 @@
 POST /menus/shop/{shopId} - 메뉴 생성
 PUT /menus/{menuId} - 메뉴 수정
 DELETE /menus/{menuId} - 메뉴 삭제
+```
+### 메뉴 관련
+```http
 POST /orders - 주문 생성
 PUT /orders/{orderId}/status - 주문 상태 변경
 GET /orders - 주문 내역 조회
