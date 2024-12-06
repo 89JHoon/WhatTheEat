@@ -35,9 +35,9 @@ public class ReviewController {
         - 리뷰를 별점 범위에 따라 조회할 수 있습니다.
             - ex) 3~5점
      */
-    @GetMapping("/Shop/{Id}")
+    @GetMapping("/Shop/{shopId}")
     public ResponseEntity<List<ReviewResponseDto>> getReviewsByShop(
-            @PathVariable Integer shopId,
+            @PathVariable Long shopId,
             @RequestParam(defaultValue = "1") int minRating,
             @RequestParam(defaultValue = "5") int maxRating,
             @SessionAttribute("authenticatedUserId") Long customerId) {

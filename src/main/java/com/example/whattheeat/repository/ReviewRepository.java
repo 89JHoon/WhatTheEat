@@ -13,15 +13,16 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 
     //리뷰 조회 관련
     @Query("SELECT r FROM Review r JOIN r.order o " +
-            "WHERE o.shopId = :shopId " +
+            "WHERE o.shop.id = :shopId " +
             "AND r.rating BETWEEN :minRating AND :maxRating " +
             "AND o.customer.id != :customerId " +
             "ORDER BY r.createdAt DESC")
     List<Review> findByShopIdAndRatingBetween(
-            @Param("shopId") Integer shopId,
+            @Param("shopId") Long shopId,
             @Param("minRating") int minRating,
             @Param("maxRating") int maxRating,
             @Param("customerId") Long customerId
     );
 
+    boolean existsByOrderId(Long orderId);
 }

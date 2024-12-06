@@ -39,6 +39,11 @@ public class ReviewService {
             throw new IllegalArgumentException("배달 완료된 주문만 리뷰를 작성할 수 있습니다.");
         }
 
+        //리뷰는 한번만 작성 가능
+        if(reviewRepository.existsByOrderId(order.getId())){
+            throw new IllegalArgumentException("이미 작성된 리뷰가 있습니다.");
+        }
+
         //리뷰 저장
         Review review = new Review(order, requestDto.getRating(), requestDto.getContent());
         reviewRepository.save(review);
@@ -46,16 +51,10 @@ public class ReviewService {
         return new ReviewResponseDto(review.getId(), review.getOrder().getId(), review.getRating(), review.getContent());
     }
 
-    //리뷰 수정
-    @Transactional
-    public ReviewResponseDto updateReview(Long customerId, Long reviewId, ReviewRequestDto requestDto){
-
-    }
-
     //리뷰 조회
   //  @Transactional(readOnly = true)
     @Transactional
-    public List<ReviewResponseDto> getReviewsByShop(Integer shopId, int minRating, int maxRating, Long customerId) {
+    public List<ReviewResponseDto> getReviewsByShop(Long shopId, int minRating, int maxRating, Long customerId) {
         List<Review> reviews = reviewRepository.findByShopIdAndRatingBetween(shopId, minRating, maxRating, customerId);
 
         if (reviews.isEmpty()) {
