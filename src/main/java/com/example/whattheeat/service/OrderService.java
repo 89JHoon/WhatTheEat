@@ -5,11 +5,13 @@ import com.example.whattheeat.dto.OrderResponseDto;
 import com.example.whattheeat.entity.Menu;
 import com.example.whattheeat.entity.Order;
 import com.example.whattheeat.entity.Shop;
-import com.example.whattheeat.entity.ShopEntity;
+import com.example.whattheeat.entity.User;
 import com.example.whattheeat.enums.OrderStatus;
+import com.example.whattheeat.exception.CustomException;
 import com.example.whattheeat.repository.MenuRepository;
 import com.example.whattheeat.repository.OrderRepository;
 import com.example.whattheeat.repository.ShopRepository;
+import com.example.whattheeat.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -26,10 +28,13 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final MenuRepository menuRepository;
     private final ShopRepository shopRepository;
+    private final UserRepository userRepository;
 
     //주문하기 - 고객 권한
     @Transactional
     public OrderResponseDto createOrder(OrderRequestDto requestDto, Long customerId){
+        User customer = userRepository.findById(customerId)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
         //메뉴와 가게 존재 확인
         Menu menu = menuRepository.findById(requestDto.getMenuId())
                 .orElseThrow(() -> new IllegalArgumentException("없는 메뉴입니다."));
@@ -53,7 +58,7 @@ public class OrderService {
         }
 
         //주문 생성 및 저장
-        Order order = new Order(customerId, menu, shop, requestDto.getQuantity(), requestDto.getAddress());
+        Order order = new Order(customer, menu, shop, requestDto.getQuantity(), requestDto.getAddress());
         orderRepository.save(order);
 
         //응답 dto 변환 후 반환

@@ -1,5 +1,6 @@
 package com.example.whattheeat.controller;
 
+import com.example.whattheeat.constant.Const;
 import com.example.whattheeat.dto.ShopResponseDto;
 import com.example.whattheeat.dto.ShopRequestDto;
 import com.example.whattheeat.entity.Shop;
@@ -22,7 +23,7 @@ public class ShopController {
     @PostMapping
     public ResponseEntity<ShopResponseDto> createShop(
             @RequestBody ShopRequestDto shopRequestDto,
-            @SessionAttribute("authenticatedUserId") Long userId) {
+            @SessionAttribute(name = Const.LOGIN_USER) Long userId) {
 
         //사장님인지 검증
 //        if(!"OWENR".equals(role)){
@@ -37,7 +38,7 @@ public class ShopController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteShop(
             @PathVariable Long id,
-            @SessionAttribute("authenticatedUserId") Long userId) {
+            @SessionAttribute(name = Const.LOGIN_USER) Long userId) {
 
         shopService.deleteShop(id, userId);
         return ResponseEntity.noContent().build();
@@ -49,7 +50,7 @@ public class ShopController {
     public ResponseEntity<ShopResponseDto> updateShop(
             @PathVariable Long id,
             @RequestBody ShopRequestDto shopRequestDto,
-            @SessionAttribute("authenticatedUserId") Long userId) {
+            @SessionAttribute(name = Const.LOGIN_USER) Long userId) {
             // @SessionAttribute("authenticatedUserRole") String role
 
         ShopResponseDto responseDto = shopService.updateShop(id, shopRequestDto, userId);

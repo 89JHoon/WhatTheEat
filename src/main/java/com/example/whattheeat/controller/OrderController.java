@@ -1,5 +1,6 @@
 package com.example.whattheeat.controller;
 
+import com.example.whattheeat.constant.Const;
 import com.example.whattheeat.dto.OrderRequestDto;
 import com.example.whattheeat.dto.OrderResponseDto;
 import com.example.whattheeat.dto.OrderStatusRequestDto;
@@ -22,8 +23,8 @@ public class OrderController {
     //현재 로그인했고, 고객인지 확인
     @PostMapping
     public ResponseEntity<OrderResponseDto> createOrder(
-            @SessionAttribute("authenticatedUserId") Long customerId,
-            @SessionAttribute("authenticatedUserRole") String role,
+            @SessionAttribute(name = Const.LOGIN_USER) Long customerId,
+            @SessionAttribute(name = Const.AUTHENTICATION) String role,
             @RequestBody @Valid OrderRequestDto requestDto) {
         //고객인지 검증
         if (!"CUSTOMER".equals(role)) {
@@ -37,8 +38,8 @@ public class OrderController {
     //현재 로그인했고, 사장님인지 확인
     @PutMapping("/{orderId}/status")
     public ResponseEntity<OrderResponseDto> updateOrderStatus(
-            @SessionAttribute("authenticatedUserId") Long ownerId,
-            @SessionAttribute("authenticatedUserRole") String role,
+            @SessionAttribute(name = Const.LOGIN_USER) Long ownerId,
+            @SessionAttribute(name = Const.AUTHENTICATION) String role,
             @PathVariable Long orderId,
             @RequestBody @Valid OrderStatusRequestDto statusRequestDto){
 
@@ -54,8 +55,8 @@ public class OrderController {
     //사장님 : 특정 가게의 주문 내역 조회
     @GetMapping
     public ResponseEntity<List<OrderResponseDto>> getOrders(
-            @SessionAttribute("authenticatedUserId") Long userId,
-            @SessionAttribute("authenticatedUserRole") String role,
+            @SessionAttribute(name = Const.LOGIN_USER) Long userId,
+            @SessionAttribute(name = Const.AUTHENTICATION) String role,
             @RequestParam(required = false) Long shopId){
         //고객일 경우 자신의 주문 내역 조회
         if("CUSTOMER".equals(role)){

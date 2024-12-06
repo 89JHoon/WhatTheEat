@@ -31,6 +31,18 @@ public class ShopResponseDto {
     }
 
     public static ShopResponseDto from(Shop shop) {
+
+        List<MenuResponseDto> menuResponses = shop.getMenus() != null
+                ? shop.getMenus().stream()
+                .map(menu -> new MenuResponseDto(
+                        shop.getId(),
+                        menu.getId(),
+                        menu.getName(),
+                        menu.getPrice()
+                ))
+                .collect(Collectors.toList())
+                :Collections.emptyList();
+
         return new ShopResponseDto(
                 shop.getId(),
                 shop.getName(),
@@ -38,14 +50,7 @@ public class ShopResponseDto {
                 shop.getOpenTime(),
                 shop.getCloseTime(),
                 shop.getState().toString(),
-                shop.getMenus() != null ? shop.getMenus().stream()
-                        .map(menu -> new MenuResponseDto(
-                                menu.getId(),
-                                menu.getName(),
-                                menu.getPrice()
-                        ))
-                        .collect(Collectors.toList())
-                        : Collections.emptyList()
+                menuResponses
         );
     }
 }

@@ -10,6 +10,7 @@ import java.math.BigDecimal;
 
 @Entity
 @Getter
+@Table(name = "orders")
 @NoArgsConstructor //기본 생성자를 생성
 public class Order extends BaseEntity{
 

@@ -1,5 +1,6 @@
 package com.example.whattheeat.controller;
 
+import com.example.whattheeat.constant.Const;
 import com.example.whattheeat.dto.MenuRequestDto;
 import com.example.whattheeat.dto.MenuResponseDto;
 import com.example.whattheeat.dto.MenuUpdateResponseDto;
@@ -23,7 +24,7 @@ public class MenuController {
     public ResponseEntity<MenuResponseDto> createMenu(
             @PathVariable Long shopId,
             @RequestBody MenuRequestDto dto,
-            @SessionAttribute("authenticatedUserId") Long userId) {
+            @SessionAttribute(name = Const.LOGIN_USER) Long userId) {
 
         //메뉴 생성하고, 서비스 실행
         //메뉴 생성 service
@@ -37,7 +38,7 @@ public class MenuController {
             @PathVariable Long shopId,
             @PathVariable Long menuId,
             @RequestBody MenuRequestDto dto,
-            @SessionAttribute("authenticatedUserId") Long userId) {
+            @SessionAttribute(name = Const.LOGIN_USER) Long userId) {
 
         //메뉴 수정 service 실행
         MenuUpdateResponseDto menuResponseDto = menuService.updateMenu(userId,shopId,menuId,dto.getName(),dto.getPrice());
@@ -50,7 +51,7 @@ public class MenuController {
     public ResponseEntity<Void> deleteMenu(
             @PathVariable Long shopId,
             @PathVariable Long menuId,
-            @SessionAttribute("authenticatedUserId") Long userId) {
+            @SessionAttribute(name = Const.LOGIN_USER) Long userId) {
 
         menuService.deleteMenu(userId,shopId,menuId);
         return ResponseEntity.noContent().build();

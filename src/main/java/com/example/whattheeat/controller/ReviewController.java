@@ -1,5 +1,6 @@
 package com.example.whattheeat.controller;
 
+import com.example.whattheeat.constant.Const;
 import com.example.whattheeat.dto.ReviewRequestDto;
 import com.example.whattheeat.dto.ReviewResponseDto;
 import com.example.whattheeat.service.ReviewService;
@@ -19,7 +20,7 @@ public class ReviewController {
 
     @PostMapping
     public ResponseEntity<ReviewResponseDto> createReview(
-            @SessionAttribute("authenticatedUserId") Long customerId,
+            @SessionAttribute(name = Const.LOGIN_USER) Long customerId,
             @RequestBody @Valid ReviewRequestDto requestDto){
         return ResponseEntity.ok(reviewService.createReview(customerId, requestDto));
     }
@@ -40,7 +41,7 @@ public class ReviewController {
             @PathVariable Long shopId,
             @RequestParam(defaultValue = "1") int minRating,
             @RequestParam(defaultValue = "5") int maxRating,
-            @SessionAttribute("authenticatedUserId") Long customerId) {
+            @SessionAttribute(name = Const.LOGIN_USER) Long customerId) {
         return ResponseEntity.ok(reviewService.getReviewsByShop(shopId, minRating, maxRating, customerId));
     }
 }
