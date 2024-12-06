@@ -4,6 +4,7 @@ import com.example.whattheeat.dto.OrderRequestDto;
 import com.example.whattheeat.dto.OrderResponseDto;
 import com.example.whattheeat.entity.Menu;
 import com.example.whattheeat.entity.Order;
+import com.example.whattheeat.entity.Shop;
 import com.example.whattheeat.entity.ShopEntity;
 import com.example.whattheeat.enums.OrderStatus;
 import com.example.whattheeat.repository.MenuRepository;
@@ -29,12 +30,11 @@ public class OrderService {
     //주문하기 - 고객 권한
     @Transactional
     public OrderResponseDto createOrder(OrderRequestDto requestDto, Long customerId){
-
         //메뉴와 가게 존재 확인
-        Menu menu = menuRepository.findMenuById(requestDto.getMenuId())
+        Menu menu = menuRepository.findById(requestDto.getMenuId())
                 .orElseThrow(() -> new IllegalArgumentException("없는 메뉴입니다."));
 
-        ShopEntity shop = shopRepository.findById(requestDto.getShopId())
+        Shop shop = shopRepository.findById(requestDto.getShopId())
                 .orElseThrow(() -> new IllegalArgumentException("가게를 찾을 수 없습니다."));
 
         //주문 금액 계산
@@ -90,14 +90,14 @@ public class OrderService {
     //주문내역 조회 - 가게
     @Transactional
     public List<OrderResponseDto> getOrderByShop(Long shopId, Long ownerId){
-        ShopEntity shop = shopRepository.findById(shopId)
+        Shop shop = shopRepository.findById(shopId)
                 .orElseThrow(() -> new IllegalArgumentException("가게를 찾을 수 없습니다."));
 
         if(!shop.getOwner().getId().equals(ownerId)){
             throw new IllegalArgumentException("해당 가게의 주문을 조회할 권한이 없습니다.");
         }
 
-        return orderRepository.findByShopId().stream()
+        return orderRepository.findByShopId(shopId).stream()
                 .map(this::convertToResponseDto)
                 .collect(Collectors.toList());
     }
