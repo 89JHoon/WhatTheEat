@@ -74,4 +74,7 @@ public class Shop extends BaseEntity {
         this.minimumPrice = minimumPrice;
         this.state = state;
     }
-}
+
+    }
+
+

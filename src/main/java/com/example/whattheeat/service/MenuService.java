@@ -54,8 +54,7 @@ public class MenuService {
     public void deleteMenu(Long userId, Long shopId, Long menuId) {
         checkShopAndOwner(shopId, userId);
         Menu menu = checkMenu(shopId, menuId);
-        menu.deleteMenu();
-        menuRepository.save(menu);
+        menuRepository.delete(menu);
     }
 
     private Menu checkMenu(Long shopId, Long menuId) {
