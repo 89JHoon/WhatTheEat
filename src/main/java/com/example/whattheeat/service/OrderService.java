@@ -7,6 +7,7 @@ import com.example.whattheeat.entity.Order;
 import com.example.whattheeat.entity.Shop;
 import com.example.whattheeat.entity.User;
 import com.example.whattheeat.enums.OrderStatus;
+import com.example.whattheeat.enums.ShopState;
 import com.example.whattheeat.exception.CustomException;
 import com.example.whattheeat.repository.MenuRepository;
 import com.example.whattheeat.repository.OrderRepository;
@@ -37,10 +38,22 @@ public class OrderService {
                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
         //메뉴와 가게 존재 확인
         Menu menu = menuRepository.findById(requestDto.getMenuId())
-                .orElseThrow(() -> new IllegalArgumentException("없는 메뉴입니다."));
+                .orElseThrow(() -> new IllegalArgumentException("해당 메뉴를 찾을 수 없습니다."));
 
         Shop shop = shopRepository.findById(requestDto.getShopId())
                 .orElseThrow(() -> new IllegalArgumentException("가게를 찾을 수 없습니다."));
+        //삭제된 메뉴, 가게 확인
+        if(shop.getDeletedAt() != null || !shop.getState().equals(ShopState.OPEN)){
+            throw new IllegalArgumentException("주문할 수 없는 가게입니다.");
+        }
+        if(menu.getIsDeleted() != null){
+            throw new IllegalArgumentException("주문할 수 없는 메뉴입니다.");
+        }
+
+        //메뉴와 가게의 연관관계
+        if(!menu.getShop().getId().equals(requestDto.getShopId())){
+            throw new IllegalArgumentException("메뉴가 해당 가게에 속하지 않습니다.");
+        }
 
         //주문 금액 계산
         BigDecimal totalPrice = menu.getPrice().multiply(BigDecimal.valueOf(requestDto.getQuantity()));
