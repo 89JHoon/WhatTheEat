@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -41,6 +42,11 @@ public class Menu extends BaseEntity {
 
     public void deleteMenu() {
         this.isDeleted = true;
+    }
+
+    public void deleteMenu(LocalDateTime deletedAt) {
+        this.isDeleted = true;
+        this.deletedAt = LocalDateTime.now();
     }
 }
 

@@ -5,22 +5,20 @@ import com.example.whattheeat.dto.MenuRequestDto;
 import com.example.whattheeat.dto.MenuResponseDto;
 import com.example.whattheeat.dto.MenuUpdateResponseDto;
 import com.example.whattheeat.service.MenuService;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/menus")
+@RequestMapping("/shop/{shopId}/menus")
 @RequiredArgsConstructor
 public class MenuController {
 
     private final MenuService menuService;
 
     //메뉴 생성
-    @PostMapping("/shop/{shopId}")
+    @PostMapping()
     public ResponseEntity<MenuResponseDto> createMenu(
             @PathVariable Long shopId,
             @RequestBody MenuRequestDto dto,

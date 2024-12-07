@@ -53,8 +53,14 @@ public class Shop extends BaseEntity {
 
     //폐업
     public void closeShop(){
+        LocalDateTime now = LocalDateTime.now();
+        this.deletedAt = now;
         this.state = ShopState.CLOSED;
         this.setDeletedAt(LocalDateTime.now());
+
+        if (this.menus != null){
+            this.menus.forEach(menu -> menu.deleteMenu(now));
+        }
     }
 
     private void setDeletedAt(LocalDateTime deletedAt){

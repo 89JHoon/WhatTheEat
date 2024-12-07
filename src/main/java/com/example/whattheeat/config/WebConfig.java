@@ -12,7 +12,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class WebConfig implements WebMvcConfigurer {
 
     private static final String[] ALL_PATH_PATTERNS = {"/**"};
-    private static final String[] WHITE_LIST ={"/users/login", "/users/signup"};
+    private static final String[] WHITE_LIST ={"/users/login", "/users/signup", "/error"};
     private static final String[] OWNER_ROLE_REQUIRED_PATH_PATTERNS = {
             "/shops/**",          // 가게 관련 모든 경로
             "/shops/*/menus/**"   // 메뉴 관련 경로

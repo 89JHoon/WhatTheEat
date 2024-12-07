@@ -48,7 +48,7 @@ public class UserService {
     public UserResponseDto edit(Long loginId, EditRequestDto requestDto) {
         User loginUser = findUserById(loginId);
         checkingPassword(requestDto.getOldPassword(), loginUser);
-        eidtUser(requestDto, loginUser);
+        editUser(requestDto, loginUser);
 
         return new UserResponseDto(loginUser.getId(), loginUser.getEmail(), loginUser.getName(), loginUser.getPhoneNumber(), loginUser.getUserRole());
     }
@@ -95,8 +95,10 @@ public class UserService {
     }
 
 
-    private static void eidtUser(EditRequestDto requestDto, User loginUser) {
-        loginUser.setPassword(requestDto.getNewPassword());
+    private void editUser(EditRequestDto requestDto, User loginUser) {
+        String encodedNewPassword = passwordEncoder.encode(requestDto.getNewPassword());
+
+        loginUser.setPassword(encodedNewPassword);
         loginUser.setPhoneNumber(requestDto.getPhoneNumber());
     }
 }
