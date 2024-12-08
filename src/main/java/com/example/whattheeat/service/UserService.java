@@ -3,6 +3,7 @@ package com.example.whattheeat.service;
 import com.example.whattheeat.config.PasswordEncoder;
 import com.example.whattheeat.dto.*;
 import com.example.whattheeat.dto.common.Authentication;
+import com.example.whattheeat.entity.Shop;
 import com.example.whattheeat.entity.User;
 import com.example.whattheeat.repository.UserRepository;
 import jakarta.validation.Valid;
@@ -29,10 +30,14 @@ public class UserService {
     }
 
     // 회원 탈퇴
+    @Transactional
     public void withdraw(Long userId, WithdrawRequestDto requestDto) {
         User findUser = findUserById(userId);
         checkingPassword(requestDto.getPassword(), findUser);
-        userRepository.delete(findUser);
+        findUser.getShopList().forEach(Shop::closeShop);
+        findUser.withDrawUser();
+        userRepository.save(findUser);
+//        userRepository.delete(findUser);
     }
 
     // 로그인

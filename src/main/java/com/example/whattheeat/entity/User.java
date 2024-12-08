@@ -9,10 +9,13 @@ import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 @Getter
 @Entity
 @Table
-@SQLDelete(sql = "update user set deleted = true  where id = ?")
+@SQLDelete(sql = "update user set deleted = true, deleted_at = CURRENT_TIMESTAMP  where id = ?")
 @SQLRestriction("deleted = false")
 @NoArgsConstructor
 public class User extends BaseEntity{
@@ -49,7 +52,23 @@ public class User extends BaseEntity{
 
     // 회원 상태
     @Column(nullable = false)
+    @Setter
     private Boolean deleted = Boolean.FALSE;
+
+    @OneToMany(mappedBy = "owner", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    private List<Shop> shopList;
+
+//    @PreRemove
+//    void preRemove() {
+//        if (shopList != null) {
+//            shopList.forEach(Shop::closeShop);
+//        }
+//    }
+
+    public void withDrawUser() {
+        this.deleted = Boolean.TRUE;
+        this.deletedAt = LocalDateTime.now();
+    }
 
     @Builder
     public User(String email, String password, String name, String phoneNumber, UserRole userRole) {

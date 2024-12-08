@@ -27,7 +27,7 @@ public class Shop extends BaseEntity {
     @Column(name = "name", unique = true, nullable = false, length = 50)
     private String name;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "owner_id", nullable = false)
     private User owner;
 
