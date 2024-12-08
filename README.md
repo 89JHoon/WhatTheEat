@@ -1,6 +1,5 @@
 # WhatTheEat
-# What The Eat
-
+#
 음식 주문 및 배달 서비스를 제공하는 Spring Boot 기반의 웹 애플리케이션입니다.
 
 ## 기술 스택
@@ -60,6 +59,8 @@ POST /orders - 주문 생성
 PUT /orders/{orderId}/status - 주문 상태 변경
 GET /orders - 주문 내역 조회
 ```
+### API 테스트
+https://documenter.getpostman.com/view/39376424/2sAYBd67kP
 
 ### 보안
 - 세션 기반 인증
