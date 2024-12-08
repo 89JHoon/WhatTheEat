@@ -28,7 +28,7 @@ public interface ShopRepository extends JpaRepository<Shop, Long> {
     //ORDER BY RAND()는 전체 테이블 스캔이 필요해 대용량 데이터에서 매우 느림
 //    @Query("SELECT * FROM Shop s WHERE s.state = 'OPEN' ORDER BY function('RAND')")
 //    List<Shop> findRandomShopsWithSelectedColumns();
-    @Query(value = "SELECT * FROM shop s WHERE s.state = 'OPEN' ORDER BY RAND()", nativeQuery = true)
+    @Query(value = "SELECT * FROM shop s WHERE s.state = 'OPEN' ORDER BY RAND() LIMIT 5", nativeQuery = true)
     List<Shop> findRandomShopsWithSelectedColumns();
 
 
