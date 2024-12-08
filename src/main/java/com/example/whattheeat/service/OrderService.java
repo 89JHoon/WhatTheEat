@@ -39,15 +39,15 @@ public class OrderService {
         //메뉴와 가게 존재 확인
         Menu menu = menuRepository.findById(requestDto.getMenuId())
                 .orElseThrow(() -> new IllegalArgumentException("해당 메뉴를 찾을 수 없습니다."));
+        if(Boolean.TRUE.equals(menu.getIsDeleted())){
+            throw new IllegalArgumentException("주문할 수 없는 메뉴입니다.");
+        }
 
         Shop shop = shopRepository.findById(requestDto.getShopId())
                 .orElseThrow(() -> new IllegalArgumentException("가게를 찾을 수 없습니다."));
         //삭제된 메뉴, 가게 확인
         if(shop.getDeletedAt() != null || !shop.getState().equals(ShopState.OPEN)){
             throw new IllegalArgumentException("주문할 수 없는 가게입니다.");
-        }
-        if(menu.getIsDeleted() != null){
-            throw new IllegalArgumentException("주문할 수 없는 메뉴입니다.");
         }
 
         //메뉴와 가게의 연관관계
